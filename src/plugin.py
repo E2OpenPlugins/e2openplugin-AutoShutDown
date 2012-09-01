@@ -56,10 +56,10 @@ class AutoShutDownActions:
 						self.stopTimer()
 						self.startTimer()
 			else:
-				print "[AutoShutDown] ShutDown VU+ STB"
+				print "[AutoShutDown] ShutDown STB"
 				session.open(Screens.Standby.TryQuitMainloop,1)
 		else:
-			print "[AutoShutDown] ShutDown VU+ STB"
+			print "[AutoShutDown] ShutDown STB"
 			session.open(Screens.Standby.TryQuitMainloop,1)
 
 	def enterStandBy(self):
@@ -101,7 +101,7 @@ class AutoShutDownActions:
 			if config.autoshutdown.inactivityaction.value == "standby":
 				self.asdkeyaction = _("Go to standby")
 			elif config.autoshutdown.inactivityaction.value == "deepstandby":
-				self.asdkeyaction = _("Power off VU+ STB")
+				self.asdkeyaction = _("Power off STB")
 			session.openWithCallback(shutdownactions.actionEndKeyTimer, MessageBox, _("AutoShutDown: %s ?") % self.asdkeyaction, MessageBox.TYPE_YESNO, timeout=config.autoshutdown.messagetimeout.value)
 		else:
 			res = True
@@ -162,16 +162,16 @@ def startSetup(menuid):
 def Plugins(**kwargs):
 		if config.autoshutdown.plugin.value:
 			return [PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown for VU+"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown for VU+"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="autoshutdown.png", fnc=main),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown for VU+"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="autoshutdown.png", fnc=main),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
 		else:
 			return [PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown for VU+"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup)]
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup)]
 
 class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	skin = """
-		<screen position="center,center" size="650,400" title="AutoShutDown for VU+" >
+		<screen position="center,center" size="650,400" title="AutoShutDown" >
 		<widget name="config" position="10,10" size="630,350" scrollbarMode="showOnDemand" />
 		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_red.png" zPosition="2" position="10,370" size="25,25" alphatest="on" />
 		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_green.png" zPosition="2" position="150,370" size="25,25" alphatest="on" />
@@ -225,7 +225,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		shutdownactions.startKeyTimer()
 
 	def setWindowTitle(self):
-		self.setTitle(_("AutoShutDown Setup for VU+ STB"))
+		self.setTitle(_("AutoShutDown Setup"))
 
 	def save(self):
 		shutdownactions.stopKeyTimer()

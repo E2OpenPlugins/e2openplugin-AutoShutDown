@@ -32,7 +32,7 @@ msgid "Go to standby"
 msgstr ""
 
 #: ../src/plugin.py:104
-msgid "Power off VU+ STB"
+msgid "Power off STB"
 msgstr ""
 
 #: ../src/plugin.py:105
@@ -55,7 +55,7 @@ msgstr ""
 #: ../src/plugin.py:166
 #: ../src/plugin.py:167
 #: ../src/plugin.py:170
-msgid "AutoShutDown for VU+"
+msgid "AutoShutDown"
 msgstr ""
 
 #: ../src/plugin.py:193
@@ -107,7 +107,7 @@ msgid "Show in Extensions/Plugins:"
 msgstr ""
 
 #: ../src/plugin.py:228
-msgid "AutoShutDown Setup for VU+ STB"
+msgid "AutoShutDown Setup"
 msgstr ""
 
 #: ../src/plugin.py:240

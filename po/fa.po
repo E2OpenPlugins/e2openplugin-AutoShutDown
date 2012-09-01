@@ -29,7 +29,7 @@ msgid "Go to standby"
 msgstr "رفتن به وضعیت استندبای"
 
 #: ../src/plugin.py:104
-msgid "Power off VU+ STB"
+msgid "Power off STB"
 msgstr "خاموش کردن رسیور  ویو پلاس"
 
 #: ../src/plugin.py:105
@@ -52,7 +52,7 @@ msgstr "برپاسازی خاموش سازی خودکار"
 #: ../src/plugin.py:166
 #: ../src/plugin.py:167
 #: ../src/plugin.py:170
-msgid "AutoShutDown for VU+"
+msgid "AutoShutDown"
 msgstr "خاموش سازی خودکار برای رسیور ویو پلاس"
 
 #: ../src/plugin.py:193
@@ -104,7 +104,7 @@ msgid "Show in Extensions/Plugins:"
 msgstr "نمایش ضمیمه ها و پلاگین ها"
 
 #: ../src/plugin.py:228
-msgid "AutoShutDown Setup for VU+ STB"
+msgid "AutoShutDown Setup"
 msgstr "راه اندازی خاموش سازی خودکار برای رسیور ویوپلاس"
 
 #: ../src/plugin.py:240
