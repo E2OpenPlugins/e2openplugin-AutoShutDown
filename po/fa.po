@@ -18,19 +18,19 @@ msgstr ""
 
 #: ../src/plugin.py:33
 msgid "Standby"
-msgstr "استندبای"
+msgstr "خاموشی موقت"
 
 #: ../src/plugin.py:33
 msgid "Deepstandby"
-msgstr "استندبای عمیق"
+msgstr "خاموش"
 
 #: ../src/plugin.py:102
 msgid "Go to standby"
-msgstr "رفتن به وضعیت استندبای"
+msgstr "رفتن به وضعیت خاموشی موقت"
 
 #: ../src/plugin.py:104
 msgid "Power off STB"
-msgstr "خاموش کردن رسیور  ویو پلاس"
+msgstr "خاموش کردن دستگاه"
 
 #: ../src/plugin.py:105
 #, python-format
@@ -53,7 +53,7 @@ msgstr "برپاسازی خاموش سازی خودکار"
 #: ../src/plugin.py:167
 #: ../src/plugin.py:170
 msgid "AutoShutDown"
-msgstr "خاموش سازی خودکار برای رسیور ویو پلاس"
+msgstr "خاموش سازی خودکار"
 
 #: ../src/plugin.py:193
 msgid "Exit"
@@ -73,7 +73,7 @@ msgstr "فعال سازی خاموش سازی خودکار"
 
 #: ../src/plugin.py:210
 msgid "Time in standby for power off (min):"
-msgstr "چند دقیقه بعد از استندبای به حالت خاموش سازی برود"
+msgstr "چند دقیقه بعد از خاموشی موقت به حالت خاموش سازی برود"
 
 #: ../src/plugin.py:211
 msgid "Enable action after inactivity:"
@@ -105,7 +105,7 @@ msgstr "نمایش ضمیمه ها و پلاگین ها"
 
 #: ../src/plugin.py:228
 msgid "AutoShutDown Setup"
-msgstr "راه اندازی خاموش سازی خودکار برای رسیور ویوپلاس"
+msgstr "راه اندازی خاموش سازی خودکار"
 
 #: ../src/plugin.py:240
 msgid "Really close without saving settings?"
