@@ -100,10 +100,6 @@ msgstr "Shutdown tijdens EPGRefresh-periode uitschakelen:"
 msgid "Show in Extensions/Plugins:"
 msgstr "Toon in Extensies/Plugins:"
 
-#: ../src/plugin.py:228
-msgid "AutoShutDown Setup"
-msgstr "AutoShutDown instellingen"
-
 #: ../src/plugin.py:240
 msgid "Really close without saving settings?"
 msgstr "Echt afsluiten zonder op te slaan?"

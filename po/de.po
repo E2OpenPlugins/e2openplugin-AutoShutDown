@@ -1,20 +1,18 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: auto shutdown\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-08-16 19:59+0100\n"
 "PO-Revision-Date: 2011-08-16 20:08+0100\n"
 "Last-Translator: plnick\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SearchPath-0: ../src\n"
 
 #: ../src/plugin.py:33
 msgid "Standby"
@@ -41,16 +39,12 @@ msgstr "AutoShutDown: %s ?"
 msgid "AutoShutDown settings"
 msgstr "Automatisches Ausschalten"
 
-#: ../src/plugin.py:165
-#: ../src/plugin.py:166
-#: ../src/plugin.py:167
+#: ../src/plugin.py:165 ../src/plugin.py:166 ../src/plugin.py:167
 #: ../src/plugin.py:170
 msgid "AutoShutDown Setup"
 msgstr "AutoShutDown Einstellungen"
 
-#: ../src/plugin.py:165
-#: ../src/plugin.py:166
-#: ../src/plugin.py:167
+#: ../src/plugin.py:165 ../src/plugin.py:166 ../src/plugin.py:167
 #: ../src/plugin.py:170
 msgid "AutoShutDown"
 msgstr "AutoShutDown"
@@ -103,10 +97,6 @@ msgstr "Deaktiviere Ausschalten in EPGRefresh Zeitspanne :"
 msgid "Show in Extensions/Plugins:"
 msgstr "Anzeige unter Plugins/Erweiterungen:"
 
-#: ../src/plugin.py:228
-msgid "AutoShutDown Setup"
-msgstr "AutoShutDown"
-
 #: ../src/plugin.py:240
 msgid "Really close without saving settings?"
 msgstr "Wollen Sie wirklich ohne speichern beenden ?"
@@ -114,4 +104,3 @@ msgstr "Wollen Sie wirklich ohne speichern beenden ?"
 #: ../src/plugin.py:256
 msgid "Reset AutoShutDown settings to defaults?"
 msgstr "Sollen die Standardeinstellungen übernommen werden ?"
-

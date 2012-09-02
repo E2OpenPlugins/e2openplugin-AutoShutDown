@@ -6,7 +6,7 @@ msgstr ""
 "PO-Revision-Date: 2012-07-23 22:49+0330\n"
 "Last-Translator: mehdi <mehdi_ar_yekta@yahoo.com>\n"
 "Language-Team: Persian Professionals <persianpros@yahoo.com>\n"
-"Language: \n"
+"Language: fa_IR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -41,16 +41,12 @@ msgstr ": خاموش کردن خودکار %s ?"
 msgid "AutoShutDown settings"
 msgstr "ایجاد تنظیمات برای خاموش سازی خودکار"
 
-#: ../src/plugin.py:165
-#: ../src/plugin.py:166
-#: ../src/plugin.py:167
+#: ../src/plugin.py:165 ../src/plugin.py:166 ../src/plugin.py:167
 #: ../src/plugin.py:170
 msgid "AutoShutDown Setup"
 msgstr "برپاسازی خاموش سازی خودکار"
 
-#: ../src/plugin.py:165
-#: ../src/plugin.py:166
-#: ../src/plugin.py:167
+#: ../src/plugin.py:165 ../src/plugin.py:166 ../src/plugin.py:167
 #: ../src/plugin.py:170
 msgid "AutoShutDown"
 msgstr "خاموش سازی خودکار"
@@ -103,10 +99,6 @@ msgstr "EPGRefresh غیر فعال کردن خاموش سازی در مدت زم
 msgid "Show in Extensions/Plugins:"
 msgstr "نمایش ضمیمه ها و پلاگین ها"
 
-#: ../src/plugin.py:228
-msgid "AutoShutDown Setup"
-msgstr "راه اندازی خاموش سازی خودکار"
-
 #: ../src/plugin.py:240
 msgid "Really close without saving settings?"
 msgstr "آیا بدون ذخیره سازی تنظیمات قصد بستن را دارید ؟"
@@ -114,4 +106,3 @@ msgstr "آیا بدون ذخیره سازی تنظیمات قصد بستن را 
 #: ../src/plugin.py:256
 msgid "Reset AutoShutDown settings to defaults?"
 msgstr "برگرداندن تنظیمات خاموش سازی خودکار به حالت پیش فرض"
-
