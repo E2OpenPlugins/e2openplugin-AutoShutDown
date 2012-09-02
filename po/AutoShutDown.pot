@@ -106,10 +106,6 @@ msgstr ""
 msgid "Show in Extensions/Plugins:"
 msgstr ""
 
-#: ../src/plugin.py:228
-msgid "AutoShutDown Setup"
-msgstr ""
-
 #: ../src/plugin.py:240
 msgid "Really close without saving settings?"
 msgstr ""
