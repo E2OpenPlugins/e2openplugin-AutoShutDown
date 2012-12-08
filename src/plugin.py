@@ -11,10 +11,12 @@
 #autoshutdown.png <from http://www.everaldo.com>
 
 from Components.ActionMap import ActionMap
-from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigEnableDisable, ConfigYesNo, ConfigInteger
-from Components.Label import Label
+from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigEnableDisable, ConfigYesNo, ConfigInteger, ConfigText, NoSave, ConfigNothing
 from Components.ConfigList import ConfigListScreen
-from enigma import eTimer, iRecordableService, eActionMap
+from Components.FileList import FileList
+from Components.Label import Label
+from Components.Sources.StaticText import StaticText
+from enigma import eTimer, iRecordableService, eActionMap, eServiceReference
 import NavigationInstance
 from os import path as os_path
 from Plugins.Plugin import PluginDescriptor
@@ -27,16 +29,24 @@ from __init__ import _
 
 config.autoshutdown = ConfigSubsection()
 config.autoshutdown.time = ConfigInteger(default = 120, limits = (1, 1440))
-config.autoshutdown.inactivetime = ConfigInteger(default = 60, limits = (1, 1440))
-config.autoshutdown.autostart = ConfigEnableDisable(default=True)
-config.autoshutdown.enableinactivity = ConfigEnableDisable(default=True)
+config.autoshutdown.inactivetime = ConfigInteger(default = 300, limits = (1, 1440))
+config.autoshutdown.autostart = ConfigEnableDisable(default = False)
+config.autoshutdown.enableinactivity = ConfigEnableDisable(default = False)
 config.autoshutdown.inactivityaction = ConfigSelection(default = "standby", choices = [("standby", _("Standby")), ("deepstandby", _("Deepstandby"))])
-config.autoshutdown.inactivitymessage = ConfigYesNo(default=True)
-config.autoshutdown.messagetimeout = ConfigInteger(default = 5, limits = (1, 60))
-config.autoshutdown.epgrefresh = ConfigYesNo(default=True)
-config.autoshutdown.plugin = ConfigYesNo(default=True)
+config.autoshutdown.inactivitymessage = ConfigYesNo(default = True)
+config.autoshutdown.messagetimeout = ConfigInteger(default = 20, limits = (1, 99))
+config.autoshutdown.epgrefresh = ConfigYesNo(default = True)
+config.autoshutdown.plugin = ConfigYesNo(default = False)
+config.autoshutdown.play_media = ConfigYesNo(default = False)
+config.autoshutdown.media_file = ConfigText(default = "")
+config.autoshutdown.fake_entry = NoSave(ConfigNothing())
 
 class AutoShutDownActions:
+	
+	def __init__(self):
+		self.oldservice = None
+	
+	
 	def enterShutDown(self):
 		if config.autoshutdown.epgrefresh.value == True:
 			if os_path.exists("/usr/lib/enigma2/python/Plugins/Extensions/EPGRefresh/EPGRefresh.py"):
@@ -102,12 +112,21 @@ class AutoShutDownActions:
 				self.asdkeyaction = _("Go to standby")
 			elif config.autoshutdown.inactivityaction.value == "deepstandby":
 				self.asdkeyaction = _("Power off STB")
+			if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+				current_service = session.nav.getCurrentlyPlayingServiceReference()
+				if self.oldservice is None:
+					self.oldservice = current_service
+				media_service = eServiceReference(4097, 0, config.autoshutdown.media_file.value)
+				session.nav.playService(media_service)
 			session.openWithCallback(shutdownactions.actionEndKeyTimer, MessageBox, _("AutoShutDown: %s ?") % self.asdkeyaction, MessageBox.TYPE_YESNO, timeout=config.autoshutdown.messagetimeout.value)
 		else:
 			res = True
 			shutdownactions.actionEndKeyTimer(res)
 
 	def actionEndKeyTimer(self, res):
+		if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+			session.nav.playService(self.oldservice)
+
 		if res == True:
 			if config.autoshutdown.inactivityaction.value == "standby":
 				print "[AutoShutDown] inactivity timer end => go to standby"
@@ -115,6 +134,10 @@ class AutoShutDownActions:
 			elif config.autoshutdown.inactivityaction.value == "deepstandby":
 				print "[AutoShutDown] inactivity timer end => shutdown"
 				self.enterShutDown()
+		else:
+			if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+				self.oldservice = None
+
 
 shutdownactions = AutoShutDownActions()
 
@@ -162,24 +185,24 @@ def startSetup(menuid):
 def Plugins(**kwargs):
 		if config.autoshutdown.plugin.value:
 			return [PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="autoshutdown.png", fnc=main),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="autoshutdown.png", fnc=main),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
 		else:
 			return [PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("AutoShutDown"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup)]
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup)]
 
 class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	skin = """
-		<screen position="center,center" size="650,400" title="AutoShutDown" >
+		<screen position="center,center" size="650,450" title="AutoShutDown" >
 		<widget name="config" position="10,10" size="630,350" scrollbarMode="showOnDemand" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_red.png" zPosition="2" position="10,370" size="25,25" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_green.png" zPosition="2" position="150,370" size="25,25" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_yellow.png" zPosition="2" position="240,370" size="25,25" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/shutdown.png" zPosition="2" position="275,250" size="100,100" alphatest="blend" />
-		<widget name="buttonred" position="40,372" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
-		<widget name="buttongreen" position="180,372" size="70,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
-		<widget name="buttonyellow" position="270,372" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_red.png" zPosition="2" position="10,420" size="25,25" alphatest="on" />
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_green.png" zPosition="2" position="150,420" size="25,25" alphatest="on" />
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_yellow.png" zPosition="2" position="240,420" size="25,25" alphatest="on" />
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/shutdown.png" zPosition="2" position="275,300" size="100,100" alphatest="blend" />
+		<widget name="buttonred" position="40,422" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
+		<widget name="buttongreen" position="180,422" size="70,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
+		<widget name="buttonyellow" position="270,422" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
 		</screen>"""
 
 	def __init__(self, session, args = 0):
@@ -200,10 +223,11 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 				"yellow": self.revert,
 				"save": self.save,
 				"cancel": self.cancel,
-				"ok": self.save,
+				"ok": self.keyOk,
 			}, -2)
 
 	def createConfigList(self):
+		self.get_media = getConfigListEntry(_("Choose media file") + " (" + config.autoshutdown.media_file.value + ")", config.autoshutdown.fake_entry)
 		self.list = []
 		self.list.append(getConfigListEntry(_("Enable AutoShutDown:"), config.autoshutdown.autostart))
 		if config.autoshutdown.autostart.value == True:
@@ -215,7 +239,11 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			self.list.append(getConfigListEntry(_("Show message before inactivity action:"), config.autoshutdown.inactivitymessage))
 			if config.autoshutdown.inactivitymessage.value == True:
 				self.list.append(getConfigListEntry(_("Message timeout (sec):"), config.autoshutdown.messagetimeout))
-		self.list.append(getConfigListEntry(_("Disable shutdown in EPGRefresh time span:"), config.autoshutdown.epgrefresh))
+				self.list.append(getConfigListEntry(_("Play media file before inactivity action:"), config.autoshutdown.play_media))
+				if config.autoshutdown.play_media.value:
+					self.list.append(self.get_media)
+		if config.autoshutdown.enableinactivity.value or config.autoshutdown.autostart.value:
+			self.list.append(getConfigListEntry(_("Disable shutdown in EPGRefresh time span:"), config.autoshutdown.epgrefresh))
 		self.list.append(getConfigListEntry(_("Show in Extensions/Plugins:"), config.autoshutdown.plugin))
 
 	def changedEntry(self):
@@ -226,6 +254,17 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 
 	def setWindowTitle(self):
 		self.setTitle(_("AutoShutDown Setup"))
+
+	def keyOk(self):
+		if self["config"].getCurrent() == self.get_media:
+			start_dir = "/media/"
+			self.session.openWithCallback(self.selectedMediaFile,AutoShutDownFile, start_dir)
+
+	def selectedMediaFile(self, res):
+		if res is not None:
+			config.autoshutdown.media_file.value = res
+			config.autoshutdown.media_file.save()
+			self.changedEntry()
 
 	def save(self):
 		shutdownactions.stopKeyTimer()
@@ -261,13 +300,104 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		else:
 			print "[AutoShutDown] Setting Configuration to defaults."
 			config.autoshutdown.time.setValue(120)
-			config.autoshutdown.autostart.setValue(1)
-			config.autoshutdown.enableinactivity.setValue(1)
-			config.autoshutdown.inactivetime.setValue(60)
+			config.autoshutdown.autostart.setValue(0)
+			config.autoshutdown.enableinactivity.setValue(0)
+			config.autoshutdown.inactivetime.setValue(300)
 			config.autoshutdown.inactivityaction.setValue("standby")
 			config.autoshutdown.epgrefresh.setValue(1)
-			config.autoshutdown.plugin.setValue(1)
+			config.autoshutdown.plugin.setValue(0)
 			config.autoshutdown.inactivitymessage.setValue(1)
-			config.autoshutdown.messagetimeout.setValue(5)
+			config.autoshutdown.messagetimeout.setValue(20)
+			config.autoshutdown.play_media.setValue(0)
+			config.autoshutdown.media_file.setValue("")
 			self.save()
 			self.close(True,self.session)
+
+class AutoShutDownFile(Screen):
+	skin = """
+		<screen name="AutoShutDownFile" position="center,center" size="650,450" title="Select a media file for AutoShutDown">
+			<widget name="media" position="10,10" size="540,30" valign="top" font="Regular;22" />
+			<widget name="filelist" position="10,45" zPosition="1" size="540,350" scrollbarMode="showOnDemand"/>
+			<widget render="Label" source="key_red" position="40,422" size="100,20" valign="center" halign="left" zPosition="2" font="Regular;18" foregroundColor="white" />
+			<widget render="Label" source="key_green" position="180,422" size="70,20" valign="center" halign="left" zPosition="2" font="Regular;18" foregroundColor="white" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_red.png" zPosition="2" position="10,420" size="25,25" alphatest="on" />
+			<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_green.png" zPosition="2" position="150,420" size="25,25" alphatest="on" />
+		</screen>
+		"""
+
+	def __init__(self, session, initDir, plugin_path = None):
+		Screen.__init__(self, session)
+		#self.skin_path = plugin_path
+		self["filelist"] = FileList(initDir, inhibitMounts = False, inhibitDirs = False, showMountpoints = False)
+		self["media"] = Label()
+		self["actions"] = ActionMap(["WizardActions", "DirectionActions", "ColorActions", "EPGSelectActions"],
+		{
+			"back": self.cancel,
+			"left": self.left,
+			"right": self.right,
+			"up": self.up,
+			"down": self.down,
+			"ok": self.ok,
+			"green": self.green,
+			"red": self.cancel
+			
+		}, -1)
+		self.title=_("Select a media file for AutoShutDown")
+		try:
+			self["title"]=StaticText(self.title)
+		except:
+			print 'self["title"] was not found in skin'	
+		self["key_red"] = StaticText(_("Cancel"))
+		self["key_green"] = StaticText(_("OK"))
+
+	def cancel(self):
+		self.close(None)
+
+	def green(self):
+		if self["filelist"].getSelection()[1] == True:
+			self["media"].setText(_("Invalid Choice"))
+		else:
+			directory = self["filelist"].getCurrentDirectory()
+			if (directory.endswith("/")):
+				self.fullpath = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
+			else:
+				self.fullpath = self["filelist"].getCurrentDirectory() + "/" + self["filelist"].getFilename()
+		  	self.close(self.fullpath)
+
+	def up(self):
+		self["filelist"].up()
+		self.updateFile()
+
+	def down(self):
+		self["filelist"].down()
+		self.updateFile()
+
+	def left(self):
+		self["filelist"].pageUp()
+		self.updateFile()
+
+	def right(self):
+		self["filelist"].pageDown()
+		self.updateFile()
+
+	def ok(self):
+		if self["filelist"].canDescent():
+			self["filelist"].descent()
+			self.updateFile()
+
+	def updateFile(self):
+		currFolder = self["filelist"].getSelection()[0]
+		if self["filelist"].getFilename() is not None:
+			directory = self["filelist"].getCurrentDirectory()
+			if (directory.endswith("/")):
+				self.fullpath = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
+			else:
+				self.fullpath = self["filelist"].getCurrentDirectory() + "/" + self["filelist"].getFilename()
+			
+			self["media"].setText(self["filelist"].getFilename())
+		else:
+			currFolder = self["filelist"].getSelection()[0]
+			if currFolder is not None:
+				self["media"].setText(currFolder)
+			else:
+				self["media"].setText(_("Invalid Choice"))
