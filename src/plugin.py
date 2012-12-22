@@ -11,14 +11,14 @@
 #autoshutdown.png <from http://www.everaldo.com>
 
 from Components.ActionMap import ActionMap
-from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigEnableDisable, ConfigYesNo, ConfigInteger, ConfigText, NoSave, ConfigNothing
+from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigEnableDisable, ConfigYesNo, ConfigInteger, ConfigText, NoSave, ConfigNothing, ConfigIP
 from Components.ConfigList import ConfigListScreen
 from Components.FileList import FileList
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from enigma import eTimer, iRecordableService, eActionMap, eServiceReference
 import NavigationInstance
-from os import path as os_path
+from os import path as os_path, system
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
@@ -39,13 +39,25 @@ config.autoshutdown.epgrefresh = ConfigYesNo(default = True)
 config.autoshutdown.plugin = ConfigYesNo(default = False)
 config.autoshutdown.play_media = ConfigYesNo(default = False)
 config.autoshutdown.media_file = ConfigText(default = "")
+config.autoshutdown.disable_at_ts = ConfigYesNo(default = False)
+config.autoshutdown.disable_net_device = ConfigYesNo(default = False)
+config.autoshutdown.net_device = ConfigIP(default = [0,0,0,0])
+
+
 config.autoshutdown.fake_entry = NoSave(ConfigNothing())
+
+def checkIP(ip_address):
+	ip_address = "%s.%s.%s.%s" % (ip_address[0], ip_address[1], ip_address[2], ip_address[3])
+	ping_ret = system("ping -q -w1 -c1 " + ip_address)
+	if ping_ret == 0:
+		return True
+	else:
+		return False
 
 class AutoShutDownActions:
 	
 	def __init__(self):
 		self.oldservice = None
-	
 	
 	def enterShutDown(self):
 		if config.autoshutdown.epgrefresh.value == True:
@@ -55,27 +67,37 @@ class AutoShutDownActions:
 						config.plugins.epgrefresh.begin.value,
 						config.plugins.epgrefresh.end.value):
 					print "[AutoShutDown] not in EPGRefresh time span => ShutDown"
-					session.open(Screens.Standby.TryQuitMainloop,1)
+					self.doShutDown()
 				else:
 					print "[AutoShutDown] in EPGRefresh time span => restart of Timer"
-					from Screens.Standby import inStandby
-					if not inStandby:
-						self.stopKeyTimer()
-						self.startKeyTimer()
-					else:
-						self.stopTimer()
-						self.startTimer()
+					self.cancelShutDown()
 			else:
 				print "[AutoShutDown] ShutDown STB"
-				session.open(Screens.Standby.TryQuitMainloop,1)
+				self.doShutDown()
 		else:
 			print "[AutoShutDown] ShutDown STB"
+			self.doShutDown()
+	
+	def cancelShutDown(self):
+		from Screens.Standby import inStandby
+		if not inStandby:
+			self.stopKeyTimer()
+			self.startKeyTimer()
+		else:
+			self.stopTimer()
+			self.startTimer()
+	
+	def doShutDown(self):
+		if config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
+			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
+			self.cancelShutDown()
+		else:
 			session.open(Screens.Standby.TryQuitMainloop,1)
-
+	
 	def enterStandBy(self):
 		print "[AutoShutDown] STANDBY . . . "
 		Notifications.AddNotification(Screens.Standby.Standby)
-
+	
 	def startTimer(self):
 		if config.autoshutdown.autostart.value == True:
 			print "[AutoShutDown] Starting ShutDownTimer"
@@ -83,7 +105,7 @@ class AutoShutDownActions:
 			self.AutoShutDownTimer = eTimer()
 			self.AutoShutDownTimer.start(shutdowntime, True)
 			self.AutoShutDownTimer.callback.append(shutdownactions.enterShutDown)
-
+	
 	def stopTimer(self):
 		try:
 			if self.AutoShutDownTimer.isActive():
@@ -91,42 +113,59 @@ class AutoShutDownActions:
 				self.AutoShutDownTimer.stop()
 		except:
 			print "[AutoShutDown] No ShutDownTimer to stop"
-
+	
 	def startKeyTimer(self):
 		if config.autoshutdown.enableinactivity.value == True:
 			inactivetime = config.autoshutdown.inactivetime.value*60000
 			self.AutoShutDownKeyTimer = eTimer()
 			self.AutoShutDownKeyTimer.start(inactivetime, True)
 			self.AutoShutDownKeyTimer.callback.append(shutdownactions.endKeyTimer)
-
+	
 	def stopKeyTimer(self):
 		try:
 			self.AutoShutDownKeyTimer.stop()
 		except:
 			print "[AutoShutDown] No inactivity timer to stop"
-
+	
 	def endKeyTimer(self):
-		if config.autoshutdown.inactivitymessage.value == True:
-			self.asdkeyaction = None
-			if config.autoshutdown.inactivityaction.value == "standby":
-				self.asdkeyaction = _("Go to standby")
-			elif config.autoshutdown.inactivityaction.value == "deepstandby":
-				self.asdkeyaction = _("Power off STB")
-			if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
-				current_service = session.nav.getCurrentlyPlayingServiceReference()
-				if self.oldservice is None:
-					self.oldservice = current_service
-				media_service = eServiceReference(4097, 0, config.autoshutdown.media_file.value)
-				session.nav.playService(media_service)
-			session.openWithCallback(shutdownactions.actionEndKeyTimer, MessageBox, _("AutoShutDown: %s ?") % self.asdkeyaction, MessageBox.TYPE_YESNO, timeout=config.autoshutdown.messagetimeout.value)
+		do_action = True
+		
+		if config.autoshutdown.inactivityaction.value == "deepstandby"  and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
+			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
+			do_action = False
+		
+		if config.autoshutdown.disable_at_ts.value:
+			running_service = session.nav.getCurrentService()
+			timeshift_service = running_service and running_service.timeshift()
+			
+			if timeshift_service and timeshift_service.isTimeshiftActive():
+				print "[AutoShutDown] inactivity timer end but timeshift is active --> ignore inactivity action"
+				do_action = False
+			
+		if do_action:
+			if config.autoshutdown.inactivitymessage.value == True:
+				self.asdkeyaction = None
+				if config.autoshutdown.inactivityaction.value == "standby":
+					self.asdkeyaction = _("Go to standby")
+				elif config.autoshutdown.inactivityaction.value == "deepstandby":
+					self.asdkeyaction = _("Power off STB")
+				if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+					current_service = session.nav.getCurrentlyPlayingServiceReference()
+					if self.oldservice is None:
+						self.oldservice = current_service
+					media_service = eServiceReference(4097, 0, config.autoshutdown.media_file.value)
+					session.nav.playService(media_service)
+				session.openWithCallback(shutdownactions.actionEndKeyTimer, MessageBox, _("AutoShutDown: %s ?") % self.asdkeyaction, MessageBox.TYPE_YESNO, timeout=config.autoshutdown.messagetimeout.value)
+			else:
+				res = True
+				shutdownactions.actionEndKeyTimer(res)
 		else:
-			res = True
-			shutdownactions.actionEndKeyTimer(res)
-
+			self.startKeyTimer()
+	
 	def actionEndKeyTimer(self, res):
 		if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
 			session.nav.playService(self.oldservice)
-
+		
 		if res == True:
 			if config.autoshutdown.inactivityaction.value == "standby":
 				print "[AutoShutDown] inactivity timer end => go to standby"
@@ -137,7 +176,6 @@ class AutoShutDownActions:
 		else:
 			if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
 				self.oldservice = None
-
 
 shutdownactions = AutoShutDownActions()
 
@@ -194,15 +232,15 @@ def Plugins(**kwargs):
 
 class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	skin = """
-		<screen position="center,center" size="650,450" title="AutoShutDown" >
+		<screen position="center,center" size="650,500" title="AutoShutDown" >
 		<widget name="config" position="10,10" size="630,350" scrollbarMode="showOnDemand" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_red.png" zPosition="2" position="10,420" size="25,25" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_green.png" zPosition="2" position="150,420" size="25,25" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_yellow.png" zPosition="2" position="240,420" size="25,25" alphatest="on" />
-		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/shutdown.png" zPosition="2" position="275,300" size="100,100" alphatest="blend" />
-		<widget name="buttonred" position="40,422" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
-		<widget name="buttongreen" position="180,422" size="70,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
-		<widget name="buttonyellow" position="270,422" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_red.png" zPosition="2" position="10,470" size="25,25" alphatest="on" />
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_green.png" zPosition="2" position="150,470" size="25,25" alphatest="on" />
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/button_yellow.png" zPosition="2" position="240,470" size="25,25" alphatest="on" />
+		<ePixmap pixmap="/usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown/pic/shutdown.png" zPosition="2" position="275,360" size="100,100" alphatest="blend" />
+		<widget name="buttonred" position="40,472" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
+		<widget name="buttongreen" position="180,472" size="70,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
+		<widget name="buttonyellow" position="270,472" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
 		</screen>"""
 
 	def __init__(self, session, args = 0):
@@ -236,6 +274,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		if config.autoshutdown.enableinactivity.value == True:
 			self.list.append(getConfigListEntry(_("Time for inactivity (min):"), config.autoshutdown.inactivetime))
 			self.list.append(getConfigListEntry(_("Action for inactivity:"), config.autoshutdown.inactivityaction))
+			self.list.append(getConfigListEntry(_("Disable inactivity action at timeshift:"), config.autoshutdown.disable_at_ts))
 			self.list.append(getConfigListEntry(_("Show message before inactivity action:"), config.autoshutdown.inactivitymessage))
 			if config.autoshutdown.inactivitymessage.value == True:
 				self.list.append(getConfigListEntry(_("Message timeout (sec):"), config.autoshutdown.messagetimeout))
@@ -244,6 +283,9 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 					self.list.append(self.get_media)
 		if config.autoshutdown.enableinactivity.value or config.autoshutdown.autostart.value:
 			self.list.append(getConfigListEntry(_("Disable shutdown in EPGRefresh time span:"), config.autoshutdown.epgrefresh))
+			self.list.append(getConfigListEntry(_("Disable shutdown until a given device is pingable:"), config.autoshutdown.disable_net_device))
+			if config.autoshutdown.disable_net_device.value:
+				self.list.append(getConfigListEntry(_("IP address of network device:"), config.autoshutdown.net_device))
 		self.list.append(getConfigListEntry(_("Show in Extensions/Plugins:"), config.autoshutdown.plugin))
 
 	def changedEntry(self):
@@ -310,6 +352,9 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			config.autoshutdown.messagetimeout.setValue(20)
 			config.autoshutdown.play_media.setValue(0)
 			config.autoshutdown.media_file.setValue("")
+			config.autoshutdown.disable_at_ts.setValue(0)
+			config.autoshutdown.disable_net_device.setValue(0)
+			config.autoshutdown.net_device.setValue([0,0,0,0])
 			self.save()
 			self.close(True,self.session)
 

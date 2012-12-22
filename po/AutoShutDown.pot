@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: AutoShutDown\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 14:28+0100\n"
-"PO-Revision-Date: 2012-12-08 14:28+0100\n"
+"POT-Creation-Date: 2012-12-22 19:45+0100\n"
+"PO-Revision-Date: 2012-12-22 19:45+0100\n"
 "Last-Translator: plnick\n"
 "Language-Team: LANGUAGE <plnick@vuplus-support.org>\n"
 "MIME-Version: 1.0\n"
@@ -71,6 +71,9 @@ msgstr ""
 msgid "Action for inactivity:"
 msgstr ""
 
+msgid "Disable inactivity action at timeshift:"
+msgstr ""
+
 msgid "Show message before inactivity action:"
 msgstr ""
 
@@ -81,6 +84,12 @@ msgid "Play media file before inactivity action:"
 msgstr ""
 
 msgid "Disable shutdown in EPGRefresh time span:"
+msgstr ""
+
+msgid "Disable shutdown until a given device is pingable:"
+msgstr ""
+
+msgid "IP address of network device:"
 msgstr ""
 
 msgid "Show in Extensions/Plugins:"

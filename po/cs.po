@@ -1,0 +1,95 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: AutoShutDown for STB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-12-08 14:28+0100\n"
+"PO-Revision-Date: 2012-12-17 08:47+0100\n"
+"Last-Translator: Roxy <vro@wo.cz>\n"
+"Language-Team: plnick <plnick@vuplus-support.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: cs\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+msgid "Action for inactivity:"
+msgstr "Neaktivní akce "
+
+msgid "AutoShutDown Setup"
+msgstr "Instalace AutoShutDown"
+
+msgid "AutoShutDown settings"
+msgstr "Nastavení AutoShutDown"
+
+msgid "AutoShutDown: %s ?"
+msgstr "Aut.vypnout :  %s  ?"
+
+msgid "Cancel"
+msgstr "Storno"
+
+msgid "Choose media file"
+msgstr "Vybrat video soubor  ...OK do struktury... "
+
+msgid "Deepstandby"
+msgstr "Hluboký spánek"
+
+msgid "Default"
+msgstr "Předvoleno"
+
+msgid "Disable shutdown in EPGRefresh time span:"
+msgstr "Deaktivovat vypnutí - v časovém rozpětí  EPGRefresh"
+
+msgid "Enable AutoShutDown:"
+msgstr "Aktivovat aut.vypnutí - AutoShutDown"
+
+msgid "Enable action after inactivity:"
+msgstr "Povolená akce po vypnutí "
+
+msgid "Exit"
+msgstr "Konec"
+
+msgid "Go to standby"
+msgstr "Přepnout do režimu spánku"
+
+msgid "Invalid Choice"
+msgstr "Chybná volba"
+
+msgid "Message timeout (sec):"
+msgstr "Časový rozsah pro zprávu (sec) "
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Play media file before inactivity action:"
+msgstr "Přehrát video před vypnutím"
+
+msgid "Power off STB"
+msgstr "Vypnout sat.přijímač"
+
+msgid "Really close without saving settings?"
+msgstr "Vypnout bez uložení nastavení ?"
+
+msgid "Reset AutoShutDown settings to defaults?"
+msgstr "Resetovat nastavení AutoShutDown podle předvoleb ?"
+
+msgid "Select a media file for AutoShutDown"
+msgstr "Vybrat video pro AutoShutDown"
+
+msgid "Show in Extensions/Plugins:"
+msgstr "Zobrazit v rozšíření, modulech"
+
+msgid "Show message before inactivity action:"
+msgstr "Zobrazit hlášení před vypnutím"
+
+msgid "Standby"
+msgstr "Režim spánku"
+
+msgid "Time for inactivity (min):"
+msgstr "Časovač vypnutí (min) "
+
+msgid "Time in standby for power off (min):"
+msgstr "Časovač v režimu spánku pro vypnutí (min)"
+
+msgid "configure automated power off / standby"
+msgstr "Konfigurace aut.přepínání vypnutí  / spánek"

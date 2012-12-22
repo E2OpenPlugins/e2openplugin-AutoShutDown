@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AutoShutDown for STB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-08 14:28+0100\n"
-"PO-Revision-Date: 2012-12-08 14:34+0100\n"
+"POT-Creation-Date: 2012-12-22 19:45+0100\n"
+"PO-Revision-Date: 2012-12-22 19:48+0100\n"
 "Last-Translator: plnick\n"
 "Language-Team: plnick <plnick@vuplus-support.org>\n"
 "MIME-Version: 1.0\n"
@@ -63,6 +63,9 @@ msgstr "Zeit bis zum Inaktivitätsereignis (min) :"
 msgid "Action for inactivity:"
 msgstr "Ereignis nach Inaktivität :"
 
+msgid "Disable inactivity action at timeshift:"
+msgstr "Ignoriere Inaktivitätsereignis bei aktivem Timeshift:"
+
 msgid "Show message before inactivity action:"
 msgstr "Zeige Nachricht vor dem Inaktivitätsereignis :"
 
@@ -74,6 +77,12 @@ msgstr "Spiele Mediendatei vor dem Inaktivitätsereignis :"
 
 msgid "Disable shutdown in EPGRefresh time span:"
 msgstr "Deaktiviere Ausschalten in EPGRefresh Zeitspanne :"
+
+msgid "Disable shutdown until a given device is pingable:"
+msgstr "Ignoriere Ausschalten solange Netzwerkgerät erreichbar ist :"
+
+msgid "IP address of network device:"
+msgstr "IP Adresse des Netzwerkgerätes:"
 
 msgid "Show in Extensions/Plugins:"
 msgstr "Anzeige unter Plugins/Erweiterungen:"
