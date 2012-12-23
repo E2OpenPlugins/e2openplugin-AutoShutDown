@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AutoShutDown\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-22 19:45+0100\n"
-"PO-Revision-Date: 2012-12-22 19:45+0100\n"
+"POT-Creation-Date: 2012-12-23 16:53+0100\n"
+"PO-Revision-Date: 2012-12-23 16:53+0100\n"
 "Last-Translator: plnick\n"
 "Language-Team: LANGUAGE <plnick@vuplus-support.org>\n"
 "MIME-Version: 1.0\n"
@@ -56,10 +56,25 @@ msgstr ""
 msgid "Choose media file"
 msgstr ""
 
-msgid "Enable AutoShutDown:"
+msgid "Configuration for automatic power off in standby"
+msgstr ""
+
+msgid "Enable automatic power off in standby:"
 msgstr ""
 
 msgid "Time in standby for power off (min):"
+msgstr ""
+
+msgid "Disable power off for given interval:"
+msgstr ""
+
+msgid "Begin of excluded interval (hh:mm):"
+msgstr ""
+
+msgid "End of excluded interval (hh:mm):"
+msgstr ""
+
+msgid "Configuration for inactivity actions"
 msgstr ""
 
 msgid "Enable action after inactivity:"
@@ -83,10 +98,16 @@ msgstr ""
 msgid "Play media file before inactivity action:"
 msgstr ""
 
-msgid "Disable shutdown in EPGRefresh time span:"
+msgid "Disable inactivity action for given interval:"
 msgstr ""
 
-msgid "Disable shutdown until a given device is pingable:"
+msgid "Common configuration"
+msgstr ""
+
+msgid "Disable power off in EPGRefresh interval:"
+msgstr ""
+
+msgid "Disable power off until a given device is pingable:"
 msgstr ""
 
 msgid "IP address of network device:"

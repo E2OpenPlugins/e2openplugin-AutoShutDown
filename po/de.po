@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: AutoShutDown for STB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-12-22 19:45+0100\n"
-"PO-Revision-Date: 2012-12-22 19:48+0100\n"
+"POT-Creation-Date: 2012-12-23 16:53+0100\n"
+"PO-Revision-Date: 2012-12-23 17:00+0100\n"
 "Last-Translator: plnick\n"
 "Language-Team: plnick <plnick@vuplus-support.org>\n"
 "MIME-Version: 1.0\n"
@@ -48,11 +48,26 @@ msgstr "Standard"
 msgid "Choose media file"
 msgstr "Mediendatei auswählen"
 
-msgid "Enable AutoShutDown:"
-msgstr "Aktiviere AutoShutDown:"
+msgid "Configuration for automatic power off in standby"
+msgstr "Automatisiertes Ausschalten im Standby konfigurieren"
+
+msgid "Enable automatic power off in standby:"
+msgstr "Aktiviere automatisches Ausschalten im Standby:"
 
 msgid "Time in standby for power off (min):"
 msgstr "Verweildauer im Standby bis zum Ausschalten (min) :"
+
+msgid "Disable power off for given interval:"
+msgstr "Deaktiviere das Herunterfahren für ein Zeitintervall :"
+
+msgid "Begin of excluded interval (hh:mm):"
+msgstr "Beginn des Zeitintervalls (hh:mm):"
+
+msgid "End of excluded interval (hh:mm):"
+msgstr "Ende des Zeitintervalls (hh:mm):"
+
+msgid "Configuration for inactivity actions"
+msgstr "Einstellungen für Inaktivitätsereignisse"
 
 msgid "Enable action after inactivity:"
 msgstr "Aktiviere Ereignis nach Inaktivität :"
@@ -75,10 +90,16 @@ msgstr "Anzeigedauer Inaktivitätsnachricht (sec) :"
 msgid "Play media file before inactivity action:"
 msgstr "Spiele Mediendatei vor dem Inaktivitätsereignis :"
 
-msgid "Disable shutdown in EPGRefresh time span:"
+msgid "Disable inactivity action for given interval:"
+msgstr "Deaktiviere Inaktivitätsereignisse für ein Zeitintervall :"
+
+msgid "Common configuration"
+msgstr "Allgemeine Einstellungen"
+
+msgid "Disable power off in EPGRefresh interval:"
 msgstr "Deaktiviere Ausschalten in EPGRefresh Zeitspanne :"
 
-msgid "Disable shutdown until a given device is pingable:"
+msgid "Disable power off until a given device is pingable:"
 msgstr "Ignoriere Ausschalten solange Netzwerkgerät erreichbar ist :"
 
 msgid "IP address of network device:"
