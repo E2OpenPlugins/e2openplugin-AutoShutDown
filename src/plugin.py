@@ -15,6 +15,7 @@ from Components.config import config, getConfigListEntry, ConfigSubsection, Conf
 				ConfigYesNo, ConfigInteger, ConfigText, NoSave, ConfigNothing, ConfigIP, ConfigClock
 from Components.ConfigList import ConfigListScreen
 from Components.FileList import FileList
+from Components.Harddisk import harddiskmanager
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from enigma import eTimer, iRecordableService, eActionMap, eServiceReference
@@ -47,6 +48,7 @@ config.autoshutdown.play_media = ConfigYesNo(default = False)
 config.autoshutdown.media_file = ConfigText(default = "")
 config.autoshutdown.disable_at_ts = ConfigYesNo(default = False)
 config.autoshutdown.disable_net_device = ConfigYesNo(default = False)
+config.autoshutdown.disable_hdd = ConfigYesNo(default = False)
 config.autoshutdown.net_device = ConfigIP(default = [0,0,0,0])
 config.autoshutdown.exclude_time_in = ConfigYesNo(default = False)
 config.autoshutdown.exclude_time_in_begin = ConfigClock(default = calculateTime(20,0))
@@ -63,6 +65,12 @@ def checkIP(ip_address):
 		return True
 	else:
 		return False
+
+def checkHardDisk():
+	for hdd in harddiskmanager.HDDList():
+		if not hdd[1].isSleeping():
+			return True
+	return False
 
 def checkExcludeTime(begin_config, end_config):
 	(begin_h, begin_m) = begin_config
@@ -113,6 +121,10 @@ class AutoShutDownActions:
 			if checkExcludeTime(begin, end):
 				print "[AutoShutDown] in EPGRefresh interval => restart of Timer"
 				do_shutdown = False
+		
+		if config.autoshutdown.disable_hdd.value and checkHardDisk():
+			print "[AutoShutDown] At least one hard disk is active  --> ignore shutdown callback"
+			do_shutdown = False
 		
 		if do_shutdown:
 			print "[AutoShutDown] PowerOff STB"
@@ -327,6 +339,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		self.list.append(getConfigListEntry("---------- " + _("Common configuration"), config.autoshutdown.fake_entry))
 		if config.autoshutdown.enableinactivity.value or config.autoshutdown.autostart.value:
 			self.list.append(getConfigListEntry(_("Disable power off in EPGRefresh interval:"), config.autoshutdown.epgrefresh))
+			self.list.append(getConfigListEntry(_("Disable power off until a hard disk is active:"), config.autoshutdown.disable_hdd))
 			self.list.append(getConfigListEntry(_("Disable power off until a given device is pingable:"), config.autoshutdown.disable_net_device))
 			if config.autoshutdown.disable_net_device.value:
 				self.list.append(getConfigListEntry(_("IP address of network device:"), config.autoshutdown.net_device))
