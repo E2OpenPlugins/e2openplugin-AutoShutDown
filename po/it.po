@@ -1,0 +1,187 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: enigma2 - e2openplugin-AutoShutDown\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-03-16 12:22+0100\n"
+"PO-Revision-Date: 2014-03-16 12:22+0100\n"
+"Last-Translator: Spaeleus <spaeleus@croci.org>\n"
+"Language-Team: www.linsat.net <spaeleus@croci.org>\n"
+"Language: it_IT\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
+"X-Poedit-Basepath: .../e2openplugin-"
+"AutoShutDown/media/TREKSTOR/e2openplugins/e2openplugins/e2openplugin-"
+"AutoShutDown\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.5.4\n"
+"X-Poedit-SearchPath-0: .../e2openplugin-"
+"AutoShutDown\n"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:42
+msgid "Standby"
+msgstr "Standby"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:42
+msgid "Deepstandby"
+msgstr "Deepstandby"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:194
+msgid "Go to standby"
+msgstr "Standby"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:196
+msgid "Power off STB"
+msgstr "Spegnere STB"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:203
+#, python-format
+msgid "AutoShutDown: %s ?"
+msgstr "AutoShutDown: %s ?"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:266
+msgid "AutoShutDown settings"
+msgstr "Impostazioni AutoShutDown"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:271
+#: .../e2openplugin-AutoShutDown/src/plugin.py:272
+#: .../e2openplugin-AutoShutDown/src/plugin.py:273
+#: .../e2openplugin-AutoShutDown/src/plugin.py:276
+#: .../e2openplugin-AutoShutDown/src/plugin.py:355
+msgid "AutoShutDown Setup"
+msgstr "Impostazioni AutoShutDown"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:271
+#: .../e2openplugin-AutoShutDown/src/plugin.py:272
+#: .../e2openplugin-AutoShutDown/src/plugin.py:273
+#: .../e2openplugin-AutoShutDown/src/plugin.py:276
+msgid "configure automated power off / standby"
+msgstr "Impostare spegnimento/standby automatici"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:299
+msgid "Exit"
+msgstr "Uscire"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:300
+#: .../e2openplugin-AutoShutDown/src/plugin.py:459
+msgid "OK"
+msgstr "Ok"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:301
+msgid "Default"
+msgstr "Predefinito"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:313
+msgid "Choose media file"
+msgstr "Scegliere il file multimediale"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:315
+msgid "Configuration for automatic power off in standby"
+msgstr "Impostazioni per lo spegnimento automatico in standby"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:316
+msgid "Enable automatic power off in standby:"
+msgstr "Abilitare lo spegimento automatico dallo standby:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:318
+msgid "Time in standby for power off (min):"
+msgstr "Periodo di standby prima dello spegnimento (min):"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:319
+msgid "Disable power off for given interval:"
+msgstr "Disabilitare lo spegnimento per l'intervallo indicato:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:321
+#: .../e2openplugin-AutoShutDown/src/plugin.py:337
+msgid "Begin of excluded interval (hh:mm):"
+msgstr "Intervallo di esclusione - inizio (hh:mm):"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:322
+#: .../e2openplugin-AutoShutDown/src/plugin.py:338
+msgid "End of excluded interval (hh:mm):"
+msgstr "Intervallo di esclusione - fine (hh:mm):"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:323
+msgid "Configuration for inactivity actions"
+msgstr "Impostazioni per eventi su stasi"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:324
+msgid "Enable action after inactivity:"
+msgstr "Abilitare evento su stasi:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:326
+msgid "Time for inactivity (min):"
+msgstr "Tempo di stasi (min):"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:327
+msgid "Action for inactivity:"
+msgstr "Evento su stasi:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:328
+msgid "Disable inactivity action at timeshift:"
+msgstr "Disabilitare eveno su stasi su timeshift:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:329
+msgid "Show message before inactivity action:"
+msgstr "Mostrare messaggio prima di evento stasi:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:331
+msgid "Message timeout (sec):"
+msgstr "Timeout messaggio (sec):"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:332
+msgid "Play media file before inactivity action:"
+msgstr "Riprodurre suono prima di evento stasi:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:335
+msgid "Disable inactivity action for given interval:"
+msgstr "Disabilitare evento su stasi per l'intervallo indicato:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:339
+msgid "Common configuration"
+msgstr "Impostazioni di base"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:341
+msgid "Disable power off in EPGRefresh interval:"
+msgstr "Disabilitare spegnimento su intervallo EPGRefresh:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:342
+msgid "Disable power off until a hard disk is active:"
+msgstr "Disabilitare spegnimento su hard disk attivo:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:343
+msgid "Disable power off until a given device is pingable:"
+msgstr ""
+"Disabilitare spegnimento fino a che un determinato dispositivo non sia "
+"pingabile:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:345
+msgid "IP address of network device:"
+msgstr "Indirizzo IP del dispositivo di rete:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:346
+msgid "Show in Extensions/Plugins:"
+msgstr "Mostrare in Estensioni/Plugin:"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:379
+msgid "Really close without saving settings?"
+msgstr "Uscire senza salvare le modifiche?"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:395
+msgid "Reset AutoShutDown settings to defaults?"
+msgstr "Ripristinare le impostazioni predefinite?"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:453
+msgid "Select a media file for AutoShutDown"
+msgstr "Impostare un file audio per AutoShutDown"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:458
+msgid "Cancel"
+msgstr "Annullare"
+
+#: .../e2openplugin-AutoShutDown/src/plugin.py:466
+#: .../e2openplugin-AutoShutDown/src/plugin.py:511
+msgid "Invalid Choice"
+msgstr "Scelta non valida"
