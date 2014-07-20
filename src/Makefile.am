@@ -1,5 +1,4 @@
 installdir = /usr/lib/enigma2/python/Plugins/SystemPlugins/AutoShutDown
-install_PYTHON = *.py
-install_DATA = *.png
+install_PYTHON = __init__.py plugin.py
+install_DATA = autoshutdown.png
 SUBDIRS = pic
-
