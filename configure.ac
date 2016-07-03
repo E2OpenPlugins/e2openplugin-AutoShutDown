@@ -19,9 +19,6 @@ AM_PATH_PYTHON
 AX_PYTHON_DEVEL
 AX_PTHREAD
 
-PKG_CHECK_MODULES(ENIGMA2, enigma2)
-PKG_CHECK_MODULES(LIBCRYPTO, libcrypto)
-
 AC_ARG_WITH(debug,
 	AS_HELP_STRING([--without-debug],[disable debugging code]),
 	[with_debug="$withval"],[with_debug="no"])
