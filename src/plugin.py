@@ -20,13 +20,14 @@ from Components.Label import Label
 from Components.Sources.StaticText import StaticText
 from enigma import eTimer, iRecordableService, eActionMap, eServiceReference
 import NavigationInstance
-from os import path as os_path, system
+import os
 from Plugins.Plugin import PluginDescriptor
 from Screens.Screen import Screen
 from Screens.MessageBox import MessageBox
 from Tools import Notifications
 from time import time, localtime, mktime
 import Screens.Standby
+
 from __init__ import _
 
 def calculateTime(hours, minutes, day_offset = 0):
@@ -60,16 +61,17 @@ config.autoshutdown.fake_entry = NoSave(ConfigNothing())
 
 def checkIP(ip_address):
 	ip_address = "%s.%s.%s.%s" % (ip_address[0], ip_address[1], ip_address[2], ip_address[3])
-	ping_ret = system("ping -q -w1 -c1 " + ip_address)
+	ping_ret = os.system("ping -q -w1 -c1 " + ip_address)
 	if ping_ret == 0:
 		return True
 	else:
 		return False
 
 def checkHardDisk():
-	for hdd in harddiskmanager.HDDList():
-		if not hdd[1].isSleeping():
-			return True
+	if harddiskmanager.HDDCount():
+		for hdd in harddiskmanager.HDDList():
+			if hdd[1].idle_running and hdd[1].max_idle_time and not hdd[1].isSleeping():
+				return True
 	return False
 
 def checkExcludeTime(begin_config, end_config):
@@ -79,19 +81,23 @@ def checkExcludeTime(begin_config, end_config):
 	begin = calculateTime(begin_h, begin_m)
 	end = calculateTime(end_h, end_m)
 	if begin >= end:
-		day_offset = 24.0 * 3600.0
-		end = calculateTime(end_h, end_m, day_offset)
+		if cur_time < end:
+			day_offset = -24.0 * 3600.0
+			begin = calculateTime(begin_h, begin_m, day_offset)
+		elif cur_time > end:
+			day_offset = 24.0 * 3600.0
+			end = calculateTime(end_h, end_m, day_offset)
+		else:
+			return False
 	if cur_time > begin and cur_time < end:
-		ret = True
-	else:
-		ret = False
-	return ret
+		return True
+	return False
 
 class AutoShutDownActions:
-	
+
 	def __init__(self):
 		self.oldservice = None
-	
+
 	def cancelShutDown(self):
 		from Screens.Standby import inStandby
 		if not inStandby:
@@ -100,10 +106,10 @@ class AutoShutDownActions:
 		else:
 			self.stopTimer()
 			self.startTimer()
-	
+
 	def doShutDown(self):
 		do_shutdown = True
-		
+
 		if config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
 			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
 			do_shutdown = False
@@ -114,36 +120,44 @@ class AutoShutDownActions:
 			if checkExcludeTime(begin, end):
 				print "[AutoShutDown] shutdown timer end but we are in exclude interval --> ignore power off"
 				do_shutdown = False
-		
-		if config.autoshutdown.epgrefresh.value == True and os_path.exists("/usr/lib/enigma2/python/Plugins/Extensions/EPGRefresh/EPGRefresh.py"):
-			begin = config.plugins.epgrefresh.begin.value
-			end = config.plugins.epgrefresh.end.value
-			if checkExcludeTime(begin, end):
-				print "[AutoShutDown] in EPGRefresh interval => restart of Timer"
-				do_shutdown = False
-		
+
+		if config.autoshutdown.epgrefresh.value and os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/EPGRefresh/EPGRefresh.py"):
+			if config.plugins.epgrefresh.enabled.value:
+				begin = config.plugins.epgrefresh.begin.value
+				end = config.plugins.epgrefresh.end.value
+				try:
+					curtime = localtime(time())
+					curday = int(curtime.tm_wday)
+					refresh_day = config.plugins.epgrefresh_extra.day_refresh[curday].value
+				except:
+					refresh_day = None
+				if checkExcludeTime(begin, end) and refresh_day != False:
+					print "[AutoShutDown] in EPGRefresh interval => restart of Timer"
+					do_shutdown = False
+
 		if config.autoshutdown.disable_hdd.value and checkHardDisk():
 			print "[AutoShutDown] At least one hard disk is active  --> ignore shutdown callback"
 			do_shutdown = False
-		
+
 		if do_shutdown:
 			print "[AutoShutDown] PowerOff STB"
 			session.open(Screens.Standby.TryQuitMainloop,1)
 		else:
 			self.cancelShutDown()
-	
+
 	def enterStandBy(self):
 		print "[AutoShutDown] STANDBY . . . "
-		Notifications.AddNotification(Screens.Standby.Standby)
-	
+		if not Screens.Standby.inTryQuitMainloop and Screens.Standby.inStandby is None:
+			Notifications.AddNotification(Screens.Standby.Standby)
+
 	def startTimer(self):
-		if config.autoshutdown.autostart.value == True:
+		if config.autoshutdown.autostart.value:
 			print "[AutoShutDown] Starting ShutDownTimer"
 			shutdowntime = config.autoshutdown.time.value*60000
 			self.AutoShutDownTimer = eTimer()
 			self.AutoShutDownTimer.start(shutdowntime, True)
 			self.AutoShutDownTimer.callback.append(shutdownactions.doShutDown)
-	
+
 	def stopTimer(self):
 		try:
 			if self.AutoShutDownTimer.isActive():
@@ -151,50 +165,50 @@ class AutoShutDownActions:
 				self.AutoShutDownTimer.stop()
 		except:
 			print "[AutoShutDown] No ShutDownTimer to stop"
-	
+
 	def startKeyTimer(self):
-		if config.autoshutdown.enableinactivity.value == True:
+		if config.autoshutdown.enableinactivity.value:
 			inactivetime = config.autoshutdown.inactivetime.value*60000
 			self.AutoShutDownKeyTimer = eTimer()
 			self.AutoShutDownKeyTimer.start(inactivetime, True)
 			self.AutoShutDownKeyTimer.callback.append(shutdownactions.endKeyTimer)
-	
+
 	def stopKeyTimer(self):
 		try:
 			self.AutoShutDownKeyTimer.stop()
 		except:
 			print "[AutoShutDown] No inactivity timer to stop"
-	
+
 	def endKeyTimer(self):
 		do_action = True
-		
+
 		if config.autoshutdown.inactivityaction.value == "deepstandby"  and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
 			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
 			do_action = False
-		
+
 		if config.autoshutdown.disable_at_ts.value:
 			running_service = session.nav.getCurrentService()
 			timeshift_service = running_service and running_service.timeshift()
-			
+
 			if timeshift_service and timeshift_service.isTimeshiftActive():
 				print "[AutoShutDown] inactivity timer end but timeshift is active --> ignore inactivity action"
 				do_action = False
-		
+
 		if config.autoshutdown.exclude_time_in.value:
 			begin = config.autoshutdown.exclude_time_in_begin.value
 			end = config.autoshutdown.exclude_time_in_end.value
 			if checkExcludeTime(begin, end):
 				print "[AutoShutDown] inactivity timer end but we are in exclude interval --> ignore inactivity action"
 				do_action = False
-			
+
 		if do_action:
-			if config.autoshutdown.inactivitymessage.value == True:
+			if config.autoshutdown.inactivitymessage.value:
 				self.asdkeyaction = None
 				if config.autoshutdown.inactivityaction.value == "standby":
 					self.asdkeyaction = _("Go to standby")
 				elif config.autoshutdown.inactivityaction.value == "deepstandby":
 					self.asdkeyaction = _("Power off STB")
-				if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+				if config.autoshutdown.play_media.value and os.path.exists(config.autoshutdown.media_file.value):
 					current_service = session.nav.getCurrentlyPlayingServiceReference()
 					if self.oldservice is None:
 						self.oldservice = current_service
@@ -206,11 +220,11 @@ class AutoShutDownActions:
 				shutdownactions.actionEndKeyTimer(res)
 		else:
 			self.startKeyTimer()
-	
+
 	def actionEndKeyTimer(self, res):
-		if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+		if config.autoshutdown.play_media.value and os.path.exists(config.autoshutdown.media_file.value):
 			session.nav.playService(self.oldservice)
-		
+
 		if res == True:
 			if config.autoshutdown.inactivityaction.value == "standby":
 				print "[AutoShutDown] inactivity timer end => go to standby"
@@ -219,7 +233,7 @@ class AutoShutDownActions:
 				print "[AutoShutDown] inactivity timer end => shutdown"
 				self.doShutDown()
 		else:
-			if config.autoshutdown.play_media.value and os_path.exists(config.autoshutdown.media_file.value):
+			if config.autoshutdown.play_media.value and os.path.exists(config.autoshutdown.media_file.value):
 				self.oldservice = None
 
 shutdownactions = AutoShutDownActions()
@@ -236,7 +250,7 @@ def autostart(reason, **kwargs):
 		shutdownactions.startKeyTimer()
 
 def keyPressed(key, flag):
-	if config.autoshutdown.enableinactivity.value == True:
+	if config.autoshutdown.enableinactivity.value:
 		from Screens.Standby import inStandby
 		if not inStandby:
 			if flag == 1:
@@ -245,7 +259,7 @@ def keyPressed(key, flag):
 	return 0
 
 def standbyCounterChanged(configElement):
-	print "[AutoShutDown] got to standby . . ."
+	print "[AutoShutDown] go to standby . . ."
 	if leaveStandby not in Screens.Standby.inStandby.onClose:
 		Screens.Standby.inStandby.onClose.append(leaveStandby)
 	shutdownactions.startTimer()
@@ -314,7 +328,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		self.list = []
 		self.list.append(getConfigListEntry("---------- " + _("Configuration for automatic power off in standby"), config.autoshutdown.fake_entry))
 		self.list.append(getConfigListEntry(_("Enable automatic power off in standby:"), config.autoshutdown.autostart))
-		if config.autoshutdown.autostart.value == True:
+		if config.autoshutdown.autostart.value:
 			self.list.append(getConfigListEntry(_("Time in standby for power off (min):"), config.autoshutdown.time))
 			self.list.append(getConfigListEntry(_("Disable power off for given interval:"), config.autoshutdown.exclude_time_off))
 			if config.autoshutdown.exclude_time_off.value:
@@ -322,12 +336,12 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 				self.list.append(getConfigListEntry(_("End of excluded interval (hh:mm):"), config.autoshutdown.exclude_time_off_end))
 		self.list.append(getConfigListEntry("---------- " + _("Configuration for inactivity actions"), config.autoshutdown.fake_entry))
 		self.list.append(getConfigListEntry(_("Enable action after inactivity:"), config.autoshutdown.enableinactivity))
-		if config.autoshutdown.enableinactivity.value == True:
+		if config.autoshutdown.enableinactivity.value:
 			self.list.append(getConfigListEntry(_("Time for inactivity (min):"), config.autoshutdown.inactivetime))
 			self.list.append(getConfigListEntry(_("Action for inactivity:"), config.autoshutdown.inactivityaction))
 			self.list.append(getConfigListEntry(_("Disable inactivity action at timeshift:"), config.autoshutdown.disable_at_ts))
 			self.list.append(getConfigListEntry(_("Show message before inactivity action:"), config.autoshutdown.inactivitymessage))
-			if config.autoshutdown.inactivitymessage.value == True:
+			if config.autoshutdown.inactivitymessage.value:
 				self.list.append(getConfigListEntry(_("Message timeout (sec):"), config.autoshutdown.messagetimeout))
 				self.list.append(getConfigListEntry(_("Play media file before inactivity action:"), config.autoshutdown.play_media))
 				if config.autoshutdown.play_media.value:
