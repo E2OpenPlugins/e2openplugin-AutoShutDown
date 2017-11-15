@@ -1,0 +1,136 @@
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AutoShutDown\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-01-23 07:28+0200\n"
+"PO-Revision-Date: 2016-01-23 07:28+0200\n"
+"Last-Translator: \n"
+"Language-Team: Vytenis Pulokas <vyteniui@gmail.com>\n"
+"Language: lt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
+"%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 1.8.6\n"
+"X-Poedit-SearchPath-0: ../src\n"
+
+msgid "Standby"
+msgstr "Budėjimo režimas"
+
+msgid "Deepstandby"
+msgstr "Išjungti"
+
+msgid "Go to standby"
+msgstr "Į budėjimo režimą"
+
+msgid "Power off STB"
+msgstr "Pilnai išjungti aparatą"
+
+#, python-format
+msgid "AutoShutDown: %s ?"
+msgstr "Autoišjungimas: %s ?"
+
+msgid "AutoShutDown settings"
+msgstr "Autoišjungimo parametrai"
+
+msgid "AutoShutDown Setup"
+msgstr "Autoišjungimo sąranka"
+
+msgid "configure automated power off / standby"
+msgstr "konfigūruoti autoišjungimą / perėjimą į budėjimą"
+
+msgid "Exit"
+msgstr "Užverti"
+
+msgid "OK"
+msgstr "Gerai"
+
+msgid "Default"
+msgstr "Numatyta"
+
+msgid "Choose media file"
+msgstr "Pasirinkti medijos failą"
+
+msgid "Configuration for automatic power off in standby"
+msgstr "Autoišjungimo iš budėjimo konfigūracija"
+
+msgid "Enable automatic power off in standby:"
+msgstr "Autoišjungimas, jei budėjimo režime:"
+
+msgid "Time in standby for power off (min):"
+msgstr "Parengties būsenoje laukti išjungimo (min.):"
+
+msgid "Disable power off for given interval:"
+msgstr "Uždrausti išjungimą nustatytam intervalui:"
+
+msgid "Begin of excluded interval (hh:mm):"
+msgstr "Išimties intervalo pradžia (hh:mm):"
+
+msgid "End of excluded interval (hh:mm):"
+msgstr "Išimties intervalo pabaiga (hh:mm):"
+
+msgid "Configuration for inactivity actions"
+msgstr "Veiksmų neveikimo atveju konfigūracija"
+
+msgid "Enable action after inactivity:"
+msgstr "Įjungti veiksmą po neaktyvumo:"
+
+msgid "Time for inactivity (min):"
+msgstr "Neaktyvumo laikas (min.):"
+
+msgid "Action for inactivity:"
+msgstr "Veiksmai neveikimo atveju:"
+
+msgid "Disable inactivity action at timeshift:"
+msgstr "Uždrausti neveiklumą laiko poslinkio atveju:"
+
+msgid "Show message before inactivity action:"
+msgstr "Rodyti pranešimą prieš pereinant į neveiklumą:"
+
+msgid "Message timeout (sec):"
+msgstr "Pranešimui skirtas laikas (sek.)"
+
+msgid "Play media file before inactivity action:"
+msgstr "Prieš pereinant į neaktyvumą, leisti šį failą:"
+
+msgid "Disable inactivity action for given interval:"
+msgstr "Uždrausti neveiklumą nustatytam intervalui:"
+
+msgid "Common configuration"
+msgstr "Bendra konfigūracija"
+
+msgid "Disable power off in EPGRefresh interval:"
+msgstr "Uždrausti išjungimą EPG atnaujinimo intervalui:"
+
+msgid "Disable power off until a hard disk is active:"
+msgstr "Uždrausti išjungimą, kol HDD aktyvus:"
+
+msgid "Disable power off until a given device is pingable:"
+msgstr "Uždrausti išjungimą, kol šis prietaisas atsako į pingą:"
+
+msgid "IP address of network device:"
+msgstr "Tinklo įrenginio IP adresas:"
+
+msgid "Show in Extensions/Plugins:"
+msgstr "Rodyti tarp plėtinių ir įskiepių:"
+
+msgid "Really close without saving settings?"
+msgstr "Tikrai uždaryti neišsaugant nustatymų?"
+
+msgid "Reset AutoShutDown settings to defaults?"
+msgstr "Atkurti autoišjungimo nustatymus į numatytuosius?"
+
+msgid "Select a media file for AutoShutDown"
+msgstr "Pasirinkti medijos failą autoišjungimui"
+
+msgid "Cancel"
+msgstr "Atšaukti"
+
+msgid "Invalid Choice"
+msgstr "Neteisingas pasirinkimas"
