@@ -18,6 +18,7 @@ from Components.FileList import FileList
 from Components.Harddisk import harddiskmanager
 from Components.Label import Label
 from Components.Sources.StaticText import StaticText
+from Components.Task import job_manager
 from enigma import eTimer, iRecordableService, eActionMap, eServiceReference
 import NavigationInstance
 import os
@@ -29,6 +30,7 @@ from time import time, localtime, mktime
 import Screens.Standby
 
 from __init__ import _
+session = None
 
 def calculateTime(hours, minutes, day_offset = 0):
 	cur_time = localtime()
@@ -82,10 +84,10 @@ def checkExcludeTime(begin_config, end_config):
 	end = calculateTime(end_h, end_m)
 	if begin >= end:
 		if cur_time < end:
-			day_offset = -24.0 * 3600.0
+			day_offset = -86400.0
 			begin = calculateTime(begin_h, begin_m, day_offset)
 		elif cur_time > end:
-			day_offset = 24.0 * 3600.0
+			day_offset = 86400.0
 			end = calculateTime(end_h, end_m, day_offset)
 		else:
 			return False
@@ -109,6 +111,11 @@ class AutoShutDownActions:
 
 	def doShutDown(self):
 		do_shutdown = True
+
+		jobs = job_manager.getPendingJobs()
+		if jobs:
+			print "[AutoShutDown] there are running jobs  --> ignore shutdown callback"
+			do_shutdown = False
 
 		if config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
 			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
@@ -240,13 +247,11 @@ shutdownactions = AutoShutDownActions()
 
 def autostart(reason, **kwargs):
 	global session
-	if kwargs.has_key("session") and reason == 0:
+	if session is None and kwargs.has_key("session") and reason == 0:
 		session = kwargs["session"]
 		print "[AutoShutDown] start...."
-		config.misc.standbyCounter.addNotifier(standbyCounterChanged, initial_call = False)
-		## from InfoBarGenerics.py
-		eActionMap.getInstance().bindAction('', -0x7FFFFFFF, keyPressed)
-		##
+		config.misc.standbyCounter.addNotifier(standbyCounterChanged, initial_call=False)
+		eActionMap.getInstance().bindAction('', -2147483647, keyPressed)
 		shutdownactions.startKeyTimer()
 
 def keyPressed(key, flag):
