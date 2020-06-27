@@ -10,6 +10,7 @@
 #source code of your modifications.
 #autoshutdown.png <from http://www.everaldo.com>
 
+from __future__ import print_function
 from Components.ActionMap import ActionMap
 from Components.config import config, getConfigListEntry, ConfigSubsection, ConfigSelection, ConfigEnableDisable, \
 				ConfigYesNo, ConfigInteger, ConfigText, NoSave, ConfigNothing, ConfigIP, ConfigClock
@@ -114,18 +115,18 @@ class AutoShutDownActions:
 
 		jobs = job_manager.getPendingJobs()
 		if jobs:
-			print "[AutoShutDown] there are running jobs  --> ignore shutdown callback"
+			print("[AutoShutDown] there are running jobs  --> ignore shutdown callback")
 			do_shutdown = False
 
 		if config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
-			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
+			print("[AutoShutDown] network device is not down  --> ignore shutdown callback")
 			do_shutdown = False
 
 		if config.autoshutdown.exclude_time_off.value:
 			begin = config.autoshutdown.exclude_time_off_begin.value
 			end = config.autoshutdown.exclude_time_off_end.value
 			if checkExcludeTime(begin, end):
-				print "[AutoShutDown] shutdown timer end but we are in exclude interval --> ignore power off"
+				print("[AutoShutDown] shutdown timer end but we are in exclude interval --> ignore power off")
 				do_shutdown = False
 
 		if config.autoshutdown.epgrefresh.value and os.path.exists("/usr/lib/enigma2/python/Plugins/Extensions/EPGRefresh/EPGRefresh.py"):
@@ -139,27 +140,27 @@ class AutoShutDownActions:
 				except:
 					refresh_day = None
 				if checkExcludeTime(begin, end) and refresh_day != False:
-					print "[AutoShutDown] in EPGRefresh interval => restart of Timer"
+					print("[AutoShutDown] in EPGRefresh interval => restart of Timer")
 					do_shutdown = False
 
 		if config.autoshutdown.disable_hdd.value and checkHardDisk():
-			print "[AutoShutDown] At least one hard disk is active  --> ignore shutdown callback"
+			print("[AutoShutDown] At least one hard disk is active  --> ignore shutdown callback")
 			do_shutdown = False
 
 		if do_shutdown:
-			print "[AutoShutDown] PowerOff STB"
+			print("[AutoShutDown] PowerOff STB")
 			session.open(Screens.Standby.TryQuitMainloop,1)
 		else:
 			self.cancelShutDown()
 
 	def enterStandBy(self):
-		print "[AutoShutDown] STANDBY . . . "
+		print("[AutoShutDown] STANDBY . . . ")
 		if not Screens.Standby.inTryQuitMainloop and Screens.Standby.inStandby is None:
 			Notifications.AddNotification(Screens.Standby.Standby)
 
 	def startTimer(self):
 		if config.autoshutdown.autostart.value:
-			print "[AutoShutDown] Starting ShutDownTimer"
+			print("[AutoShutDown] Starting ShutDownTimer")
 			shutdowntime = config.autoshutdown.time.value*60000
 			self.AutoShutDownTimer = eTimer()
 			self.AutoShutDownTimer.start(shutdowntime, True)
@@ -168,10 +169,10 @@ class AutoShutDownActions:
 	def stopTimer(self):
 		try:
 			if self.AutoShutDownTimer.isActive():
-				print "[AutoShutDown] Stopping ShutDownTimer"
+				print("[AutoShutDown] Stopping ShutDownTimer")
 				self.AutoShutDownTimer.stop()
 		except:
-			print "[AutoShutDown] No ShutDownTimer to stop"
+			print("[AutoShutDown] No ShutDownTimer to stop")
 
 	def startKeyTimer(self):
 		if config.autoshutdown.enableinactivity.value:
@@ -184,13 +185,13 @@ class AutoShutDownActions:
 		try:
 			self.AutoShutDownKeyTimer.stop()
 		except:
-			print "[AutoShutDown] No inactivity timer to stop"
+			print("[AutoShutDown] No inactivity timer to stop")
 
 	def endKeyTimer(self):
 		do_action = True
 
 		if config.autoshutdown.inactivityaction.value == "deepstandby"  and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
-			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
+			print("[AutoShutDown] network device is not down  --> ignore shutdown callback")
 			do_action = False
 
 		if config.autoshutdown.disable_at_ts.value:
@@ -198,14 +199,14 @@ class AutoShutDownActions:
 			timeshift_service = running_service and running_service.timeshift()
 
 			if timeshift_service and timeshift_service.isTimeshiftActive():
-				print "[AutoShutDown] inactivity timer end but timeshift is active --> ignore inactivity action"
+				print("[AutoShutDown] inactivity timer end but timeshift is active --> ignore inactivity action")
 				do_action = False
 
 		if config.autoshutdown.exclude_time_in.value:
 			begin = config.autoshutdown.exclude_time_in_begin.value
 			end = config.autoshutdown.exclude_time_in_end.value
 			if checkExcludeTime(begin, end):
-				print "[AutoShutDown] inactivity timer end but we are in exclude interval --> ignore inactivity action"
+				print("[AutoShutDown] inactivity timer end but we are in exclude interval --> ignore inactivity action")
 				do_action = False
 
 		if do_action:
@@ -234,10 +235,10 @@ class AutoShutDownActions:
 
 		if res == True:
 			if config.autoshutdown.inactivityaction.value == "standby":
-				print "[AutoShutDown] inactivity timer end => go to standby"
+				print("[AutoShutDown] inactivity timer end => go to standby")
 				self.enterStandBy()
 			elif config.autoshutdown.inactivityaction.value == "deepstandby":
-				print "[AutoShutDown] inactivity timer end => shutdown"
+				print("[AutoShutDown] inactivity timer end => shutdown")
 				self.doShutDown()
 		else:
 			if config.autoshutdown.play_media.value and os.path.exists(config.autoshutdown.media_file.value):
@@ -249,7 +250,7 @@ def autostart(reason, **kwargs):
 	global session
 	if session is None and kwargs.has_key("session") and reason == 0:
 		session = kwargs["session"]
-		print "[AutoShutDown] start...."
+		print("[AutoShutDown] start....")
 		config.misc.standbyCounter.addNotifier(standbyCounterChanged, initial_call=False)
 		eActionMap.getInstance().bindAction('', -2147483647, keyPressed)
 		shutdownactions.startKeyTimer()
@@ -264,19 +265,19 @@ def keyPressed(key, flag):
 	return 0
 
 def standbyCounterChanged(configElement):
-	print "[AutoShutDown] go to standby . . ."
+	print("[AutoShutDown] go to standby . . .")
 	if leaveStandby not in Screens.Standby.inStandby.onClose:
 		Screens.Standby.inStandby.onClose.append(leaveStandby)
 	shutdownactions.startTimer()
 	shutdownactions.stopKeyTimer()
 
 def leaveStandby():
-	print "[AutoShutDown] leave standby . . ."
+	print("[AutoShutDown] leave standby . . .")
 	shutdownactions.stopTimer()
 	shutdownactions.startKeyTimer()
 
 def main(session, **kwargs):
-	print "[AutoShutDown] Open Configuration"
+	print("[AutoShutDown] Open Configuration")
 	session.open(AutoShutDownConfiguration)
 
 def startSetup(menuid):
@@ -403,9 +404,9 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 
 	def cancelConfirm(self, result):
 		if result is None or result is False:
-			print "[AutoShutDown] Cancel not confirmed."
+			print("[AutoShutDown] Cancel not confirmed.")
 		else:
-			print "[AutoShutDown] Cancel confirmed. Configchanges will be lost."
+			print("[AutoShutDown] Cancel confirmed. Configchanges will be lost.")
 			for x in self["config"].list:
 				x[1].cancel()
 			self.close(False,self.session)
@@ -415,9 +416,9 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 
 	def keyYellowConfirm(self, confirmed):
 		if not confirmed:
-			print "[AutoShutDown] Reset to defaults not confirmed."
+			print("[AutoShutDown] Reset to defaults not confirmed.")
 		else:
-			print "[AutoShutDown] Setting Configuration to defaults."
+			print("[AutoShutDown] Setting Configuration to defaults.")
 			config.autoshutdown.time.setValue(120)
 			config.autoshutdown.autostart.setValue(0)
 			config.autoshutdown.enableinactivity.setValue(0)
@@ -473,7 +474,7 @@ class AutoShutDownFile(Screen):
 		try:
 			self["title"]=StaticText(self.title)
 		except:
-			print 'self["title"] was not found in skin'	
+			print('self["title"] was not found in skin')	
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
 
