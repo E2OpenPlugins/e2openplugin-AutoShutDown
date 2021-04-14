@@ -483,13 +483,13 @@ class AutoShutDownFile(Screen):
 			"ok": self.ok,
 			"green": self.green,
 			"red": self.cancel
-			
+
 		}, -1)
 		self.title = _("Select a media file for AutoShutDown")
 		try:
 			self["title"] = StaticText(self.title)
 		except:
-			print 'self["title"] was not found in skin'	
+			print 'self["title"] was not found in skin'
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
 
@@ -536,7 +536,7 @@ class AutoShutDownFile(Screen):
 				self.fullpath = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
 			else:
 				self.fullpath = self["filelist"].getCurrentDirectory() + "/" + self["filelist"].getFilename()
-			
+
 			self["media"].setText(self["filelist"].getFilename())
 		else:
 			currFolder = self["filelist"].getSelection()[0]
