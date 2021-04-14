@@ -160,7 +160,7 @@ class AutoShutDownActions:
 	def startTimer(self):
 		if config.autoshutdown.autostart.value:
 			print "[AutoShutDown] Starting ShutDownTimer"
-			shutdowntime = config.autoshutdown.time.value*60000
+			shutdowntime = config.autoshutdown.time.value * 60000
 			self.AutoShutDownTimer = eTimer()
 			self.AutoShutDownTimer.start(shutdowntime, True)
 			self.AutoShutDownTimer.callback.append(shutdownactions.doShutDown)
@@ -175,7 +175,7 @@ class AutoShutDownActions:
 
 	def startKeyTimer(self):
 		if config.autoshutdown.enableinactivity.value:
-			inactivetime = config.autoshutdown.inactivetime.value*60000
+			inactivetime = config.autoshutdown.inactivetime.value * 60000
 			self.AutoShutDownKeyTimer = eTimer()
 			self.AutoShutDownKeyTimer.start(inactivetime, True)
 			self.AutoShutDownKeyTimer.callback.append(shutdownactions.endKeyTimer)
@@ -189,7 +189,7 @@ class AutoShutDownActions:
 	def endKeyTimer(self):
 		do_action = True
 
-		if config.autoshutdown.inactivityaction.value == "deepstandby"  and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
+		if config.autoshutdown.inactivityaction.value == "deepstandby" and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
 			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
 			do_action = False
 
@@ -469,9 +469,9 @@ class AutoShutDownFile(Screen):
 			"red": self.cancel
 			
 		}, -1)
-		self.title=_("Select a media file for AutoShutDown")
+		self.title = _("Select a media file for AutoShutDown")
 		try:
-			self["title"]=StaticText(self.title)
+			self["title"] = StaticText(self.title)
 		except:
 			print 'self["title"] was not found in skin'	
 		self["key_red"] = StaticText(_("Cancel"))
