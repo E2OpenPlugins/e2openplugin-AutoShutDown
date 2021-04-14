@@ -32,10 +32,12 @@ import Screens.Standby
 from __init__ import _
 session = None
 
+
 def calculateTime(hours, minutes, day_offset=0):
 	cur_time = localtime()
 	unix_time = mktime((cur_time.tm_year, cur_time.tm_mon, cur_time.tm_mday, hours, minutes, 0, cur_time.tm_wday, cur_time.tm_yday, cur_time.tm_isdst)) + day_offset
 	return unix_time
+
 
 config.autoshutdown = ConfigSubsection()
 config.autoshutdown.time = ConfigInteger(default=120, limits=(1, 1440))
@@ -61,6 +63,7 @@ config.autoshutdown.exclude_time_off_begin = ConfigClock(default=calculateTime(2
 config.autoshutdown.exclude_time_off_end = ConfigClock(default=calculateTime(0, 0))
 config.autoshutdown.fake_entry = NoSave(ConfigNothing())
 
+
 def checkIP(ip_address):
 	ip_address = "%s.%s.%s.%s" % (ip_address[0], ip_address[1], ip_address[2], ip_address[3])
 	ping_ret = os.system("ping -q -w1 -c1 " + ip_address)
@@ -69,12 +72,14 @@ def checkIP(ip_address):
 	else:
 		return False
 
+
 def checkHardDisk():
 	if harddiskmanager.HDDCount():
 		for hdd in harddiskmanager.HDDList():
 			if hdd[1].idle_running and hdd[1].max_idle_time and not hdd[1].isSleeping():
 				return True
 	return False
+
 
 def checkExcludeTime(begin_config, end_config):
 	(begin_h, begin_m) = begin_config
@@ -94,6 +99,7 @@ def checkExcludeTime(begin_config, end_config):
 	if cur_time > begin and cur_time < end:
 		return True
 	return False
+
 
 class AutoShutDownActions:
 
@@ -243,7 +249,9 @@ class AutoShutDownActions:
 			if config.autoshutdown.play_media.value and os.path.exists(config.autoshutdown.media_file.value):
 				self.oldservice = None
 
+
 shutdownactions = AutoShutDownActions()
+
 
 def autostart(reason, **kwargs):
 	global session
@@ -254,6 +262,7 @@ def autostart(reason, **kwargs):
 		eActionMap.getInstance().bindAction('', -2147483647, keyPressed)
 		shutdownactions.startKeyTimer()
 
+
 def keyPressed(key, flag):
 	if config.autoshutdown.enableinactivity.value:
 		from Screens.Standby import inStandby
@@ -263,6 +272,7 @@ def keyPressed(key, flag):
 				shutdownactions.startKeyTimer()
 	return 0
 
+
 def standbyCounterChanged(configElement):
 	print "[AutoShutDown] go to standby . . ."
 	if leaveStandby not in Screens.Standby.inStandby.onClose:
@@ -270,19 +280,23 @@ def standbyCounterChanged(configElement):
 	shutdownactions.startTimer()
 	shutdownactions.stopKeyTimer()
 
+
 def leaveStandby():
 	print "[AutoShutDown] leave standby . . ."
 	shutdownactions.stopTimer()
 	shutdownactions.startKeyTimer()
 
+
 def main(session, **kwargs):
 	print "[AutoShutDown] Open Configuration"
 	session.open(AutoShutDownConfiguration)
+
 
 def startSetup(menuid):
 	if menuid != "system":
 		return []
 	return [(_("AutoShutDown settings"), main, "autoshutdown_setup", 60)]
+
 
 def Plugins(**kwargs):
 		if config.autoshutdown.plugin.value:
@@ -293,6 +307,7 @@ def Plugins(**kwargs):
 		else:
 			return [PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=autostart),
 				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where=PluginDescriptor.WHERE_MENU, fnc=startSetup)]
+
 
 class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	skin = """
@@ -439,6 +454,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			config.autoshutdown.exclude_time_off_begin.setValue([20, 0])
 			config.autoshutdown.exclude_time_off_end.setValue([0, 0])
 			self.save(False)
+
 
 class AutoShutDownFile(Screen):
 	skin = """
