@@ -52,13 +52,13 @@ config.autoshutdown.media_file = ConfigText(default="")
 config.autoshutdown.disable_at_ts = ConfigYesNo(default=False)
 config.autoshutdown.disable_net_device = ConfigYesNo(default=False)
 config.autoshutdown.disable_hdd = ConfigYesNo(default=False)
-config.autoshutdown.net_device = ConfigIP(default=[0,0,0,0])
+config.autoshutdown.net_device = ConfigIP(default=[0, 0, 0, 0])
 config.autoshutdown.exclude_time_in = ConfigYesNo(default=False)
-config.autoshutdown.exclude_time_in_begin = ConfigClock(default=calculateTime(20,0))
-config.autoshutdown.exclude_time_in_end = ConfigClock(default=calculateTime(0,0))
+config.autoshutdown.exclude_time_in_begin = ConfigClock(default=calculateTime(20, 0))
+config.autoshutdown.exclude_time_in_end = ConfigClock(default=calculateTime(0, 0))
 config.autoshutdown.exclude_time_off = ConfigYesNo(default=False)
-config.autoshutdown.exclude_time_off_begin = ConfigClock(default=calculateTime(20,0))
-config.autoshutdown.exclude_time_off_end = ConfigClock(default=calculateTime(0,0))
+config.autoshutdown.exclude_time_off_begin = ConfigClock(default=calculateTime(20, 0))
+config.autoshutdown.exclude_time_off_end = ConfigClock(default=calculateTime(0, 0))
 config.autoshutdown.fake_entry = NoSave(ConfigNothing())
 
 def checkIP(ip_address):
@@ -148,7 +148,7 @@ class AutoShutDownActions:
 
 		if do_shutdown:
 			print "[AutoShutDown] PowerOff STB"
-			session.open(Screens.Standby.TryQuitMainloop,1)
+			session.open(Screens.Standby.TryQuitMainloop, 1)
 		else:
 			self.cancelShutDown()
 
@@ -376,7 +376,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	def keyOk(self):
 		if self["config"].getCurrent() == self.get_media:
 			start_dir = "/media/"
-			self.session.openWithCallback(self.selectedMediaFile,AutoShutDownFile, start_dir)
+			self.session.openWithCallback(self.selectedMediaFile, AutoShutDownFile, start_dir)
 
 	def selectedMediaFile(self, res):
 		if res is not None:
@@ -399,7 +399,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		else:
 			for x in self["config"].list:
 				x[1].cancel()
-			self.close(False,self.session)
+			self.close(False, self.session)
 
 	def cancelConfirm(self, result):
 		if result is None or result is False:
@@ -408,7 +408,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			print "[AutoShutDown] Cancel confirmed. Configchanges will be lost."
 			for x in self["config"].list:
 				x[1].cancel()
-			self.close(False,self.session)
+			self.close(False, self.session)
 
 	def revert(self):
 		self.session.openWithCallback(self.keyYellowConfirm, MessageBox, _("Reset AutoShutDown settings to defaults?"), MessageBox.TYPE_YESNO, timeout=20, default=False)
@@ -431,7 +431,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			config.autoshutdown.media_file.setValue("")
 			config.autoshutdown.disable_at_ts.setValue(0)
 			config.autoshutdown.disable_net_device.setValue(0)
-			config.autoshutdown.net_device.setValue([0,0,0,0])
+			config.autoshutdown.net_device.setValue([0, 0, 0, 0])
 			config.autoshutdown.exclude_time_in.setValue(0)
 			config.autoshutdown.exclude_time_in_begin.setValue([20, 0])
 			config.autoshutdown.exclude_time_in_end.setValue([0, 0])
