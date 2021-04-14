@@ -32,34 +32,37 @@ import Screens.Standby
 from __init__ import _
 session = None
 
-def calculateTime(hours, minutes, day_offset = 0):
+
+def calculateTime(hours, minutes, day_offset=0):
 	cur_time = localtime()
 	unix_time = mktime((cur_time.tm_year, cur_time.tm_mon, cur_time.tm_mday, hours, minutes, 0, cur_time.tm_wday, cur_time.tm_yday, cur_time.tm_isdst)) + day_offset
 	return unix_time
 
+
 config.autoshutdown = ConfigSubsection()
-config.autoshutdown.time = ConfigInteger(default = 120, limits = (1, 1440))
-config.autoshutdown.inactivetime = ConfigInteger(default = 300, limits = (1, 1440))
-config.autoshutdown.autostart = ConfigEnableDisable(default = False)
-config.autoshutdown.enableinactivity = ConfigEnableDisable(default = False)
-config.autoshutdown.inactivityaction = ConfigSelection(default = "standby", choices = [("standby", _("Standby")), ("deepstandby", _("Deepstandby"))])
-config.autoshutdown.inactivitymessage = ConfigYesNo(default = True)
-config.autoshutdown.messagetimeout = ConfigInteger(default = 20, limits = (1, 99))
-config.autoshutdown.epgrefresh = ConfigYesNo(default = True)
-config.autoshutdown.plugin = ConfigYesNo(default = False)
-config.autoshutdown.play_media = ConfigYesNo(default = False)
-config.autoshutdown.media_file = ConfigText(default = "")
-config.autoshutdown.disable_at_ts = ConfigYesNo(default = False)
-config.autoshutdown.disable_net_device = ConfigYesNo(default = False)
-config.autoshutdown.disable_hdd = ConfigYesNo(default = False)
-config.autoshutdown.net_device = ConfigIP(default = [0,0,0,0])
-config.autoshutdown.exclude_time_in = ConfigYesNo(default = False)
-config.autoshutdown.exclude_time_in_begin = ConfigClock(default = calculateTime(20,0))
-config.autoshutdown.exclude_time_in_end = ConfigClock(default = calculateTime(0,0))
-config.autoshutdown.exclude_time_off = ConfigYesNo(default = False)
-config.autoshutdown.exclude_time_off_begin = ConfigClock(default = calculateTime(20,0))
-config.autoshutdown.exclude_time_off_end = ConfigClock(default = calculateTime(0,0))
+config.autoshutdown.time = ConfigInteger(default=120, limits=(1, 1440))
+config.autoshutdown.inactivetime = ConfigInteger(default=300, limits=(1, 1440))
+config.autoshutdown.autostart = ConfigEnableDisable(default=False)
+config.autoshutdown.enableinactivity = ConfigEnableDisable(default=False)
+config.autoshutdown.inactivityaction = ConfigSelection(default="standby", choices=[("standby", _("Standby")), ("deepstandby", _("Deepstandby"))])
+config.autoshutdown.inactivitymessage = ConfigYesNo(default=True)
+config.autoshutdown.messagetimeout = ConfigInteger(default=20, limits=(1, 99))
+config.autoshutdown.epgrefresh = ConfigYesNo(default=True)
+config.autoshutdown.plugin = ConfigYesNo(default=False)
+config.autoshutdown.play_media = ConfigYesNo(default=False)
+config.autoshutdown.media_file = ConfigText(default="")
+config.autoshutdown.disable_at_ts = ConfigYesNo(default=False)
+config.autoshutdown.disable_net_device = ConfigYesNo(default=False)
+config.autoshutdown.disable_hdd = ConfigYesNo(default=False)
+config.autoshutdown.net_device = ConfigIP(default=[0, 0, 0, 0])
+config.autoshutdown.exclude_time_in = ConfigYesNo(default=False)
+config.autoshutdown.exclude_time_in_begin = ConfigClock(default=calculateTime(20, 0))
+config.autoshutdown.exclude_time_in_end = ConfigClock(default=calculateTime(0, 0))
+config.autoshutdown.exclude_time_off = ConfigYesNo(default=False)
+config.autoshutdown.exclude_time_off_begin = ConfigClock(default=calculateTime(20, 0))
+config.autoshutdown.exclude_time_off_end = ConfigClock(default=calculateTime(0, 0))
 config.autoshutdown.fake_entry = NoSave(ConfigNothing())
+
 
 def checkIP(ip_address):
 	ip_address = "%s.%s.%s.%s" % (ip_address[0], ip_address[1], ip_address[2], ip_address[3])
@@ -69,12 +72,14 @@ def checkIP(ip_address):
 	else:
 		return False
 
+
 def checkHardDisk():
 	if harddiskmanager.HDDCount():
 		for hdd in harddiskmanager.HDDList():
 			if hdd[1].idle_running and hdd[1].max_idle_time and not hdd[1].isSleeping():
 				return True
 	return False
+
 
 def checkExcludeTime(begin_config, end_config):
 	(begin_h, begin_m) = begin_config
@@ -94,6 +99,7 @@ def checkExcludeTime(begin_config, end_config):
 	if cur_time > begin and cur_time < end:
 		return True
 	return False
+
 
 class AutoShutDownActions:
 
@@ -148,7 +154,7 @@ class AutoShutDownActions:
 
 		if do_shutdown:
 			print "[AutoShutDown] PowerOff STB"
-			session.open(Screens.Standby.TryQuitMainloop,1)
+			session.open(Screens.Standby.TryQuitMainloop, 1)
 		else:
 			self.cancelShutDown()
 
@@ -160,7 +166,7 @@ class AutoShutDownActions:
 	def startTimer(self):
 		if config.autoshutdown.autostart.value:
 			print "[AutoShutDown] Starting ShutDownTimer"
-			shutdowntime = config.autoshutdown.time.value*60000
+			shutdowntime = config.autoshutdown.time.value * 60000
 			self.AutoShutDownTimer = eTimer()
 			self.AutoShutDownTimer.start(shutdowntime, True)
 			self.AutoShutDownTimer.callback.append(shutdownactions.doShutDown)
@@ -175,7 +181,7 @@ class AutoShutDownActions:
 
 	def startKeyTimer(self):
 		if config.autoshutdown.enableinactivity.value:
-			inactivetime = config.autoshutdown.inactivetime.value*60000
+			inactivetime = config.autoshutdown.inactivetime.value * 60000
 			self.AutoShutDownKeyTimer = eTimer()
 			self.AutoShutDownKeyTimer.start(inactivetime, True)
 			self.AutoShutDownKeyTimer.callback.append(shutdownactions.endKeyTimer)
@@ -189,7 +195,7 @@ class AutoShutDownActions:
 	def endKeyTimer(self):
 		do_action = True
 
-		if config.autoshutdown.inactivityaction.value == "deepstandby"  and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
+		if config.autoshutdown.inactivityaction.value == "deepstandby" and config.autoshutdown.disable_net_device.value and checkIP(config.autoshutdown.net_device.value):
 			print "[AutoShutDown] network device is not down  --> ignore shutdown callback"
 			do_action = False
 
@@ -243,7 +249,9 @@ class AutoShutDownActions:
 			if config.autoshutdown.play_media.value and os.path.exists(config.autoshutdown.media_file.value):
 				self.oldservice = None
 
+
 shutdownactions = AutoShutDownActions()
+
 
 def autostart(reason, **kwargs):
 	global session
@@ -254,6 +262,7 @@ def autostart(reason, **kwargs):
 		eActionMap.getInstance().bindAction('', -2147483647, keyPressed)
 		shutdownactions.startKeyTimer()
 
+
 def keyPressed(key, flag):
 	if config.autoshutdown.enableinactivity.value:
 		from Screens.Standby import inStandby
@@ -263,6 +272,7 @@ def keyPressed(key, flag):
 				shutdownactions.startKeyTimer()
 	return 0
 
+
 def standbyCounterChanged(configElement):
 	print "[AutoShutDown] go to standby . . ."
 	if leaveStandby not in Screens.Standby.inStandby.onClose:
@@ -270,29 +280,34 @@ def standbyCounterChanged(configElement):
 	shutdownactions.startTimer()
 	shutdownactions.stopKeyTimer()
 
+
 def leaveStandby():
 	print "[AutoShutDown] leave standby . . ."
 	shutdownactions.stopTimer()
 	shutdownactions.startKeyTimer()
 
+
 def main(session, **kwargs):
 	print "[AutoShutDown] Open Configuration"
 	session.open(AutoShutDownConfiguration)
 
+
 def startSetup(menuid):
 	if menuid != "system":
-		return [ ]
-	return [(_("AutoShutDown settings") , main, "autoshutdown_setup", 60)]
+		return []
+	return [(_("AutoShutDown settings"), main, "autoshutdown_setup", 60)]
+
 
 def Plugins(**kwargs):
 		if config.autoshutdown.plugin.value:
-			return [PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_PLUGINMENU, icon="autoshutdown.png", fnc=main),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
+			return [PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=autostart),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where=PluginDescriptor.WHERE_MENU, fnc=startSetup),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where=PluginDescriptor.WHERE_PLUGINMENU, icon="autoshutdown.png", fnc=main),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where=PluginDescriptor.WHERE_EXTENSIONSMENU, fnc=main)]
 		else:
-			return [PluginDescriptor(where = [PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc = autostart),
-				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where = PluginDescriptor.WHERE_MENU, fnc=startSetup)]
+			return [PluginDescriptor(where=[PluginDescriptor.WHERE_SESSIONSTART, PluginDescriptor.WHERE_AUTOSTART], fnc=autostart),
+				PluginDescriptor(name=_("AutoShutDown Setup"), description=_("configure automated power off / standby"), where=PluginDescriptor.WHERE_MENU, fnc=startSetup)]
+
 
 class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	skin = """
@@ -307,13 +322,13 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 		<widget name="buttonyellow" position="270,472" size="100,20" valign="center" halign="left" zPosition="2" foregroundColor="white" font="Regular;18"/>
 		</screen>"""
 
-	def __init__(self, session, args = 0):
+	def __init__(self, session, args=0):
 		self.session = session
 		Screen.__init__(self, session)
 
 		self.createConfigList()
 		self.onShown.append(self.setWindowTitle)
-		ConfigListScreen.__init__(self, self.list, session = self.session, on_change = self.changedEntry)
+		ConfigListScreen.__init__(self, self.list, session=self.session, on_change=self.changedEntry)
 
 		self["buttonred"] = Label(_("Exit"))
 		self["buttongreen"] = Label(_("OK"))
@@ -376,7 +391,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 	def keyOk(self):
 		if self["config"].getCurrent() == self.get_media:
 			start_dir = "/media/"
-			self.session.openWithCallback(self.selectedMediaFile,AutoShutDownFile, start_dir)
+			self.session.openWithCallback(self.selectedMediaFile, AutoShutDownFile, start_dir)
 
 	def selectedMediaFile(self, res):
 		if res is not None:
@@ -384,7 +399,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			config.autoshutdown.media_file.save()
 			self.changedEntry()
 
-	def save(self, ret = True):
+	def save(self, ret=True):
 		shutdownactions.stopKeyTimer()
 		for x in self["config"].list:
 			x[1].save()
@@ -395,11 +410,11 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 
 	def cancel(self):
 		if self["config"].isChanged():
-			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"), MessageBox.TYPE_YESNO, default = False)
+			self.session.openWithCallback(self.cancelConfirm, MessageBox, _("Really close without saving settings?"), MessageBox.TYPE_YESNO, default=False)
 		else:
 			for x in self["config"].list:
 				x[1].cancel()
-			self.close(False,self.session)
+			self.close(False, self.session)
 
 	def cancelConfirm(self, result):
 		if result is None or result is False:
@@ -408,10 +423,10 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			print "[AutoShutDown] Cancel confirmed. Configchanges will be lost."
 			for x in self["config"].list:
 				x[1].cancel()
-			self.close(False,self.session)
+			self.close(False, self.session)
 
 	def revert(self):
-		self.session.openWithCallback(self.keyYellowConfirm, MessageBox, _("Reset AutoShutDown settings to defaults?"), MessageBox.TYPE_YESNO, timeout = 20, default = False)
+		self.session.openWithCallback(self.keyYellowConfirm, MessageBox, _("Reset AutoShutDown settings to defaults?"), MessageBox.TYPE_YESNO, timeout=20, default=False)
 
 	def keyYellowConfirm(self, confirmed):
 		if not confirmed:
@@ -431,7 +446,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			config.autoshutdown.media_file.setValue("")
 			config.autoshutdown.disable_at_ts.setValue(0)
 			config.autoshutdown.disable_net_device.setValue(0)
-			config.autoshutdown.net_device.setValue([0,0,0,0])
+			config.autoshutdown.net_device.setValue([0, 0, 0, 0])
 			config.autoshutdown.exclude_time_in.setValue(0)
 			config.autoshutdown.exclude_time_in_begin.setValue([20, 0])
 			config.autoshutdown.exclude_time_in_end.setValue([0, 0])
@@ -439,6 +454,7 @@ class AutoShutDownConfiguration(Screen, ConfigListScreen):
 			config.autoshutdown.exclude_time_off_begin.setValue([20, 0])
 			config.autoshutdown.exclude_time_off_end.setValue([0, 0])
 			self.save(False)
+
 
 class AutoShutDownFile(Screen):
 	skin = """
@@ -452,10 +468,10 @@ class AutoShutDownFile(Screen):
 		</screen>
 		"""
 
-	def __init__(self, session, initDir, plugin_path = None):
+	def __init__(self, session, initDir, plugin_path=None):
 		Screen.__init__(self, session)
 		#self.skin_path = plugin_path
-		self["filelist"] = FileList(initDir, inhibitMounts = False, inhibitDirs = False, showMountpoints = False)
+		self["filelist"] = FileList(initDir, inhibitMounts=False, inhibitDirs=False, showMountpoints=False)
 		self["media"] = Label()
 		self["actions"] = ActionMap(["WizardActions", "DirectionActions", "ColorActions", "EPGSelectActions"],
 		{
@@ -467,13 +483,13 @@ class AutoShutDownFile(Screen):
 			"ok": self.ok,
 			"green": self.green,
 			"red": self.cancel
-			
+
 		}, -1)
-		self.title=_("Select a media file for AutoShutDown")
+		self.title = _("Select a media file for AutoShutDown")
 		try:
-			self["title"]=StaticText(self.title)
+			self["title"] = StaticText(self.title)
 		except:
-			print 'self["title"] was not found in skin'	
+			print 'self["title"] was not found in skin'
 		self["key_red"] = StaticText(_("Cancel"))
 		self["key_green"] = StaticText(_("OK"))
 
@@ -520,7 +536,7 @@ class AutoShutDownFile(Screen):
 				self.fullpath = self["filelist"].getCurrentDirectory() + self["filelist"].getFilename()
 			else:
 				self.fullpath = self["filelist"].getCurrentDirectory() + "/" + self["filelist"].getFilename()
-			
+
 			self["media"].setText(self["filelist"].getFilename())
 		else:
 			currFolder = self["filelist"].getSelection()[0]
