@@ -281,8 +281,8 @@ def main(session, **kwargs):
 
 def startSetup(menuid):
 	if menuid != "system":
-		return [ ]
-	return [(_("AutoShutDown settings") , main, "autoshutdown_setup", 60)]
+		return []
+	return [(_("AutoShutDown settings"), main, "autoshutdown_setup", 60)]
 
 def Plugins(**kwargs):
 		if config.autoshutdown.plugin.value:
